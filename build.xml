@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<project name="projet" basedir=".">
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
+	<property name="test" location="tests"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+	<property name="doc" location="doc"/>
+
+	<presetdef name="javac">
+		<javac includeantruntime="false" />
+	</presetdef>
+	
+	<path id="classpath">
+        <fileset dir="${lib}" includes="*.jar"/>
+    </path>
+
+	<target name="compile">
+		<mkdir dir="${build}" />
+
+		<copy todir="${build}">
+			<fileset dir="${lib}"/>
+		</copy>
+
+		<javac srcdir="${src}" destdir="${build}" debug="on"  classpathref="classpath">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="doc">
+		<mkdir dir="${doc}" />
+		<javadoc sourcefiles="${src}/*.java" destdir="${doc}" encoding="utf-8" charset="utf-8" docencoding="utf-8">
+			<classpath>
+				<fileset dir="${lib}" includes="*.jar"/>
+			</classpath>
+		</javadoc>
+		
+	</target>
+	
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}" />
+
+		<jar basedir="${build}" destfile="${dist}/forager.jar">
+			<manifest>
+				<attribute name="Main-Class" value="Main"/>
+			</manifest>
+			<zipgroupfileset dir="${build}" includes="*.jar" />
+		</jar>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="run" depends="dist">
+<!--
+		<java fork="yes" classname="Main" classpath=".:${build}:${build}/madkit-5.jar:${build}:${build}/QuadTree.jar">
+-->
+		<java fork="yes" classname="Main" classpath=".:${build}:${build}/madkit-5.jar:${build}">
+		</java>
+	</target>
+	
+
+
+</project>
