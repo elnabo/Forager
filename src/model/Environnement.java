@@ -70,7 +70,7 @@ public class Environnement
 	
 	public boolean remove(FixedObject obj)
 	{
-		return grid.remove(obj);
+		return entities.remove(obj) && grid.remove(obj);
 	}
 	
 	public List<FixedObject> collide(Rectangle bounds)

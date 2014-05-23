@@ -6,6 +6,8 @@ import model.FixedObject;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class EnvironnementUI
 {
@@ -20,12 +22,13 @@ public class EnvironnementUI
 	{
 		float scaleX = ((float)size.width) / environnement.size.width,
 				scaleY = ((float)size.height) / environnement.size.height;
-		for (FixedObject obj : environnement.entities)
+		for (FixedObject obj : new ArrayList<FixedObject>(environnement.entities))
 		{
-			int sx = (int)Math.round(obj.bounds().getMinX() * scaleX),
-				ex = (int)Math.round(obj.bounds().getMaxX() * scaleX),
-				sy = (int)Math.round(obj.bounds().getMinY() * scaleY),
-				ey = (int)Math.round(obj.bounds().getMaxY() * scaleY);
+			Rectangle rect = obj.bounds();
+			int sx = Math.round(rect.x * scaleX),
+				ex = Math.round((rect.x + rect.width) * scaleX),
+				sy = Math.round(rect.y * scaleY),
+				ey = Math.round((rect.y + rect.height) * scaleY);
 			switch (obj.type())
 			{
 				case "food":
@@ -40,6 +43,6 @@ public class EnvironnementUI
 			graphic.fillPolygon(new int[]{sx,ex,ex,sx},new int[]{sy,sy,ey,ey},4);
 		}
 		
-		graphic.setColor(Color.RED);
+		//~ graphic.setColor(Color.RED);
 	}
 }

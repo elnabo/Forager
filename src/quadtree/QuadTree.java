@@ -63,6 +63,7 @@ public class QuadTree<T extends QuadTreeElement>
 	
 	public boolean remove(T element)
 	{
+		allEntities.remove(element);
 		return entities.remove(element) || children.get(getIndex(element.bounds())).remove(element);
 	}
 	

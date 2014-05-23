@@ -35,7 +35,7 @@ public abstract class FixedObject implements QuadTreeElement
 		return new Point(position);
 	}
 	
-	public void delete()
+	protected void delete()
 	{
 		environnement.remove(this);
 	}
@@ -43,5 +43,10 @@ public abstract class FixedObject implements QuadTreeElement
 	public String type()
 	{
 		return "none";
+	}
+	
+	public boolean harvestable()
+	{
+		return false;
 	}
 }

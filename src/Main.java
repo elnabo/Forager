@@ -1,6 +1,7 @@
 import agents.ApplicationViewer;
 import agents.ApplicationScheduler;
-import agents.DummyAgent;
+import agents.MobileAgent;
+import brain.DummyBrain;
 import model.Environnement;
 import model.object.ressource.Food;
 import ui.EnvironnementUI;
@@ -47,6 +48,6 @@ public class Main
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
 		viewer.init(environnement, envUI);
 		
-		kernel.doAction(KernelAction.LAUNCH_AGENT, new DummyAgent(environnement));
+		kernel.doAction(KernelAction.LAUNCH_AGENT, new MobileAgent(environnement, new DummyBrain()));
 	}
 }

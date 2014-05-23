@@ -33,11 +33,11 @@ public class Inventory
 		return (storage.containsKey(item)) ? storage.get(item) : 0;
 	}
 	
-	public boolean add(String item, int weight)
+	public int add(String item, int weight)
 	{
 		if (weight > freeCapacity)
 		{
-			return false;
+			weight = freeCapacity;
 		}
 		
 		freeCapacity -= weight;
@@ -45,7 +45,7 @@ public class Inventory
 			storage.put(item, storage.get(item) + weight);
 		else
 			storage.put(item,weight);
-		return true;
+		return weight;
 	}
 	
 	public SimpleEntry<String,Integer> remove(String item, int weight)
