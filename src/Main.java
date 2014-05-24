@@ -59,7 +59,7 @@ public class Main
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
 		viewer.init(environnement, envUI);
 		
-		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement, new DummyBrain()));
+		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement, new Point(20,20), new DummyBrain()));
 		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement,new Point(7,7),new DummyBrain()));
 	}
 }

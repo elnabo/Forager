@@ -24,4 +24,9 @@ public final class RessourceMessage implements MessageContent
 		this.sender = sender;
 		this.reply = reply;
 	}
+	
+	public Class<MessageContent> getReplyClass()
+	{
+		return null;
+	}
 }

@@ -10,6 +10,7 @@ import model.object.Harvestable;
 import util.Vector2D;
 
 import madkit.kernel.AbstractAgent;
+import madkit.kernel.AbstractAgent.ReturnCode;
 import madkit.kernel.Agent;
 import madkit.kernel.Message;
 import madkit.message.ObjectMessage;
@@ -28,7 +29,7 @@ import java.util.ArrayDeque;
 public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 {
 	private static final long serialVersionUID = -68366833257439L;
-	private static int count = 0;
+	public static int count = 0;
 	
 	private final Color col = Color.BLUE;
 	
@@ -48,24 +49,30 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	private String team;
 	private ArrayDeque<MessageContent> messageBox = new ArrayDeque<MessageContent>();
 	
+	private boolean first = true;
+	
 	public MaDKitAgent(Environnement environnement, Brain brain)
 	{
 		this.environnement = environnement;
-		hitbox = new Rectangle(20,20,5,5);
+		hitbox = new Rectangle(20,20,width, height);
 		id = count++;
 		team = "";
-		this.brain = brain;
-		//~ this.brain = brain.init(this);
+		inventory = new Inventory(100);
+		inventory.add(foodType,childCost/2);
+		this.brain = brain.init(this);
+		environnement.add(this);
 	}
 	
 	public MaDKitAgent(Environnement environnement, Point pos, Brain brain)
 	{
 		this.environnement = environnement;
-		hitbox = new Rectangle(pos.x, pos.y,5,5);
+		hitbox = new Rectangle(pos.x, pos.y,width, height);
 		id = count++;
 		team = "";
-		this.brain = brain;
-		//~ this.brain = brain.init(this);
+		inventory = new Inventory(100);
+		inventory.add(foodType,childCost/2);
+		this.brain = brain.init(this);
+		environnement.add(this);
 	}
 	
 	@Override
@@ -74,16 +81,22 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 		requestRole(defaultCommunity, defaultGroup, defaultRole);
 		requestRole(defaultCommunity, defaultGroup, id + "");
 		requestRole(defaultCommunity, team, id + "");
-		inventory = new Inventory(100);
-		inventory.add("food",50);
-		brain.init(this);
-		environnement.add(this);
+		//~ environnement.add(this);
 	}
 	
 	@Override
 	public int add(String item, int weight)
 	{
 		return inventory.add(item,weight);
+	}
+	
+	@Override
+	public void broadcast(MessageContent message)
+	{
+		for (AgentInfo ai : getVisibleAgents())
+		{
+			sendMessage(message,ai);
+		}
 	}
 	
 	private boolean collide(AgentEntity ae, Rectangle b)
@@ -98,6 +111,48 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	public final Color color()
 	{
 		return col;
+	}
+	
+	@Override
+	public boolean copulate(AgentInfo other)
+	{
+		AgentEntity otherEntity = getAgent(other.id);
+		if (otherEntity == null)
+			return false;
+			
+		Inventory otherInventory = otherEntity.inventory();
+		int halfChildCost = childCost / 2;
+		
+		if (inventory.getCapacity(foodType) < halfChildCost &&
+			otherInventory.getCapacity(foodType) < halfChildCost)
+			return false;
+		
+		Point futurPos = new Point((hitbox.x + otherEntity.hitbox().x)/2,
+			(hitbox.y + otherEntity.hitbox().y)/2);
+		if (createAgent(futurPos))
+		{
+			inventory.remove(foodType,halfChildCost);
+			otherInventory.remove(foodType,halfChildCost);
+			System.out.println(inventory.getCapacity(foodType));
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean createAgent(Point pos)
+	{
+		try
+		{
+			 ReturnCode rc = launchAgent(new MaDKitAgent(environnement, pos, brain.getClass().newInstance()));
+			 first = false;
+			 return rc == ReturnCode.SUCCESS;
+
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			return false;
+		}
 	}
 	
 	@Override
@@ -124,16 +179,18 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	@Override
 	public void eat(int quantity)
 	{
-		hunger = Math.max(0,hunger - inventory.remove("food",quantity).getValue());
+		hunger = Math.max(0,hunger - inventory.remove(foodType,quantity).getValue());
 	}
 	
 	@Override
-	public void give(AgentInfo ai, String item, int quantity)
+	public AgentEntity getAgent(int id)
 	{
-		sendMessage(defaultCommunity,defaultGroup,ai.id + "",
-				new ObjectMessage<RessourceMessage>(new RessourceMessage(
-				item, inventory.remove(item,quantity).getValue(), info()))
-				);
+		for (AgentEntity ae : environnement.agents)
+		{
+			if (ae.id() == id)
+				return ae;
+		}
+		return null;
 	}
 
 	@Override
@@ -185,6 +242,15 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 			hitbox.height + 2 * visionRange));
 	}
 	
+	@Override
+	public void give(AgentInfo ai, String item, int quantity)
+	{
+		sendMessage(defaultCommunity,defaultGroup,ai.id + "",
+				new ObjectMessage<RessourceMessage>(new RessourceMessage(
+				item, inventory.remove(item,quantity).getValue(), info()))
+				);
+	}
+	
 	private void handleMessage()
 	{
 		while (!isMessageBoxEmpty())
@@ -225,7 +291,6 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 				harvested += ((Harvestable)i).harvest(this);
 			}
 		}
-		//~ give(new AgentInfo(new Rectangle(0,0),"",1), "food",harvested);
 		return harvested;
 	}
 	
@@ -254,18 +319,30 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	public int id()
+	{
+		return id;
+	}
+	
+	@Override
 	public AgentInfo info()
 	{
 		return new AgentInfo(hitbox, team(), id);
 	}
 	
 	@Override
-	public final void moveBy(Vector2D mvment)
+	public Inventory inventory()
+	{
+		return inventory;
+	}
+	
+	@Override
+	public final Vector2D moveBy(Vector2D mvment)
 	{
 		if (mvment.norm() > 1)
 			mvment = mvment.unitVector();//.scalarMul(maxSpeed);
 		if (mvment.norm() < 0)
-			return;// new Vector2D(0,0);
+			return new Vector2D(0,0);
 			
 		List<FixedObject> collision = getCollisionAfterMovement(mvment);
 		// colliding
@@ -279,6 +356,15 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 			hitbox.x += (int)Math.round(mvment.x);
 			hitbox.y += (int)Math.round(mvment.y);
 		}
+		
+		return new Vector2D(direction);
+	}
+	
+	@Override
+	public void sendMessage(MessageContent message, AgentInfo ai)
+	{
+		sendMessage(defaultCommunity,defaultGroup, ai.id+"",
+			new ObjectMessage<MessageContent>(message));
 	}
 	
 	@Override
