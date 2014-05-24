@@ -17,6 +17,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class MobileAgent extends AbstractAgent implements AgentEntity
 {
@@ -25,18 +26,24 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	
 	protected double maxSteeringChange = 0.5;
 	protected Vector2D direction;
-	protected final int maxSpeed = 10;
-	protected Inventory inventory = new Inventory(75);
+	protected final int maxSpeed = 1;
+	protected Inventory inventory;// = new Inventory(75);
 	protected Rectangle hitbox;
 	protected Environnement environnement;
 	protected Brain brain;
 	
+	protected int visionRange = 50;
+	protected int hunger = 0;
+	protected int maxHunger = 100;
+	
+	
 	public MobileAgent(Environnement environnement, Brain brain)
 	{
 		this.environnement = environnement;
-		hitbox = new Rectangle(5,7,5,5);
+		hitbox = new Rectangle(20,20,5,5);
 		this.brain = brain.init(this);
 	}
+	
 	public MobileAgent(Environnement environnement, Point pos, Brain brain)
 	{
 		this.environnement = environnement;
@@ -48,34 +55,14 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	protected void activate()
 	{
 		requestRole("global","global","mobileAgent");
+		inventory = new Inventory(100);
+		inventory.add("food",50);
 	}
 	
-	public void update() { brain.update();}
-	
-	public final Vector2D direction()
+	@Override
+	public int add(String item, int weight)
 	{
-		return new Vector2D(direction);
-	}
-
-	public final Rectangle hitbox()
-	{
-		return new Rectangle(hitbox);
-	}
-	
-	public final void moveBy(Vector2D mvment)
-	{
-		List<FixedObject> collision = getCollisionAfterMovement(mvment);
-		// colliding
-		if (collision != null && collision.size() > 0)
-		{
-			direction = new Vector2D(0,0);
-		}
-		else
-		{
-			direction = new Vector2D(mvment);
-			hitbox.x += (int)Math.round(mvment.x);
-			hitbox.y += (int)Math.round(mvment.y);
-		}
+		return inventory.add(item,weight);
 	}
 	
 	public final Color color()
@@ -83,11 +70,39 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 		return col;
 	}
 	
+	@Override
+	public final Vector2D direction()
+	{
+		return new Vector2D(direction);
+	}
+	
+	@Override
+	public void die()
+	{
+		killAgent(this);
+	}
+	
+	@Override
+	public int drop(String item, int quantity)
+	{
+		Entry<String, Integer> toDrop = inventory.remove(item, quantity);
+		environnement.createRessource(toDrop, new Point(hitbox.x, hitbox.y));
+		return toDrop.getValue();
+	}
+	
+	@Override
+	public void eat(int quantity)
+	{
+		hunger = Math.max(0,hunger - inventory.remove("food",quantity).getValue());
+	}
+
+	@Override
 	public final List<FixedObject> getCollision(Rectangle bounds)
 	{
 		return environnement.collide(bounds);
 	}
 	
+	@Override
 	public List<FixedObject> getCollisionAfterMovement(Vector2D mvment)
 	{
 		Rectangle box = new Rectangle(hitbox);
@@ -96,11 +111,26 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 		return getCollision(box);
 	}
 	
+	//~ @Override
+	//~ public List<AgentEntity> getVisibleNeighbors()
+	//~ {
+		//~ return null;
+	//~ }
+	
+	@Override
+	public List<FixedObject> getVisibleObjects()
+	{
+		return environnement.collide(new Rectangle(hitbox.x - visionRange,
+			hitbox.y - visionRange,	hitbox.width + 2 * visionRange,
+			hitbox.height + 2 * visionRange));
+	}
+	
 	/**
 	 * Harvest the ressource who collide with the agent.
 	 * 
 	 * @return The quantity harvested.
 	 */
+	@Override
 	public final int harvest() 
 	{
 		int harvested = 0;
@@ -115,16 +145,57 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 		return harvested;
 	}
 	
-	public int add(String item, int weight)
+	@Override
+	public final Rectangle hitbox()
 	{
-		return inventory.add(item,weight);
+		return new Rectangle(hitbox);
 	}
 	
-	protected final int drop(String item, int quantity)
+	/**
+	 * 0 = no need to eat.
+	 * 1 = dead of hunger.
+	 */
+	@Override
+	public double hunger()
 	{
-		SimpleEntry<String, Integer> toDrop = inventory.remove(item, quantity);
-		environnement.createRessource(toDrop, new Point(hitbox.x, hitbox.y));
-		return toDrop.getValue();
+		return hunger / ((double)maxHunger);
+	}
+	
+	@Override
+	public void increaseHunger()
+	{
+		hunger++;
+		if (hunger == maxHunger)
+			die();
+	}
+	
+	@Override
+	public final void moveBy(Vector2D mvment)
+	{
+		if (mvment.norm() > 1)
+			mvment = mvment.unitVector();//.scalarMul(maxSpeed);
+		if (mvment.norm() < 0)
+			return;// new Vector2D(0,0);
+			
+		List<FixedObject> collision = getCollisionAfterMovement(mvment);
+		// colliding
+		if (collision != null && collision.size() > 0)
+		{
+			direction = new Vector2D(0,0);
+		}
+		else
+		{
+			direction = new Vector2D(mvment);
+			hitbox.x += (int)Math.round(mvment.x);
+			hitbox.y += (int)Math.round(mvment.y);
+		}
+	}
+	
+	@Override
+	public void update() 
+	{ 
+		increaseHunger();
+		brain.update();
 	}
 	
 }

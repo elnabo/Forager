@@ -28,7 +28,7 @@ public class ApplicationScheduler extends Scheduler
 		
 		agents = new GenericBehaviorActivator<MobileAgent>("global","global","mobileAgent","update");
 		addActivator(agents);
-		setDelay(1);
+		setDelay(5);
 		
 		receiveMessage(new SchedulingMessage(SchedulingAction.RUN));
 	}

@@ -1,6 +1,6 @@
 package brain;
 
-import agents.MobileAgent;
+import agents.AgentEntity;
 import model.FixedObject;
 import util.Vector2D;
 
@@ -10,13 +10,18 @@ import java.util.Random;
 
 public abstract class Brain
 {
-	private MobileAgent parent;
+	private AgentEntity parent;
 	private Random generator = new Random();
 	
-	public final Brain init(MobileAgent parent)
+	public final Brain init(AgentEntity parent)
 	{
 		this.parent = parent;
 		return this;
+	}
+	
+	public final void die()
+	{
+		parent.die();
 	}
 	
 	public final Vector2D direction()
@@ -24,9 +29,9 @@ public abstract class Brain
 		return parent.direction();
 	}
 	
-	public final int harvest()
+	public final void eat(int quantity)
 	{
-		return parent.harvest();
+		parent.eat(quantity);
 	}
 	
 	public List<FixedObject> getCollision()
@@ -37,6 +42,26 @@ public abstract class Brain
 	public List<FixedObject> getCollisionAfterMovement(Vector2D mvment)
 	{
 		return parent.getCollisionAfterMovement(mvment);
+	}
+	
+	//~ public List<AgentEntity> getVisibleNeighbors()
+	//~ {
+		//~ return parent.getVisibleNeighbors();
+	//~ }
+	
+	public List<FixedObject> getVisibleObjects()
+	{
+		return parent.getVisibleObjects();
+	}
+	
+	public final int harvest()
+	{
+		return parent.harvest();
+	}
+	
+	public final double hunger()
+	{
+		return parent.hunger();
 	}
 	
 	public final void moveBy(Vector2D direction)

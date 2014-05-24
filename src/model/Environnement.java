@@ -6,9 +6,9 @@ import quadtree.QuadTree;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 
 public class Environnement
@@ -95,7 +95,7 @@ public class Environnement
 				a.y < b.y + b.height;
 	}
 	
-	public void createRessource(SimpleEntry<String, Integer> ressource, Point position)
+	public void createRessource(Entry<String, Integer> ressource, Point position)
 	{
 		switch(ressource.getKey())
 		{

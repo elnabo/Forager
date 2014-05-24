@@ -3,6 +3,7 @@ import agents.ApplicationScheduler;
 import agents.MobileAgent;
 import brain.DummyBrain;
 import model.Environnement;
+import model.object.obstacle.Wall;
 import model.object.ressource.Food;
 import ui.EnvironnementUI;
 
@@ -31,20 +32,28 @@ public class Main
 			}
 		}
 		catch (Exception e)	{}
+		
 		Environnement environnement = new Environnement(viewer.size);
-		int a = 0;
+		
 		for(int i=0; i<= viewer.size.width; i+=5)
 		{
-			environnement.add(new Food(environnement, new Rectangle(i,0,4,4)));
-			environnement.add(new Food(environnement, new Rectangle(i,viewer.size.height-4,4,4)));
-			a+=2;
+			environnement.add(new Wall(environnement, new Rectangle(i,0,5,5)));
+			environnement.add(new Wall(environnement, new Rectangle(i,viewer.size.height-5,5,5)));
 		}
 		for(int i=5; i<= viewer.size.height-5; i+=5)
 		{
-			environnement.add(new Food(environnement, new Rectangle(0,i,4,4)));
-			environnement.add(new Food(environnement, new Rectangle(viewer.size.width-4,i,4,4)));
-			a+=2;
+			environnement.add(new Wall(environnement, new Rectangle(0,i,5	,5)));
+			environnement.add(new Wall(environnement, new Rectangle(viewer.size.width-5,i,5,5)));
 		}
+		
+		for(int i=50; i<=70;i+=5)
+		{
+			for(int j=50; j<=70; j+=5)
+			{
+				environnement.add(new Food(environnement, new Rectangle(i,j,5,5)));
+			}
+		}
+		
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
 		viewer.init(environnement, envUI);
 		

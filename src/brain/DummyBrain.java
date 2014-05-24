@@ -1,6 +1,6 @@
 package brain;
 
-import agents.MobileAgent;
+//~ import agents.AgentEntity;
 import model.FixedObject;
 import util.Vector2D;
 
@@ -12,7 +12,7 @@ public class DummyBrain extends Brain
 	@Override
 	public void update()
 	{
-		Vector2D mvment = new Vector2D(1,0);
+		Vector2D mvment = new Vector2D(1,1);
 		
 		List<FixedObject> possibleCollisions = getCollisionAfterMovement(mvment);
 		if (possibleCollisions != null && possibleCollisions.size() != 0)
@@ -23,5 +23,8 @@ public class DummyBrain extends Brain
 		{
 			moveBy(mvment);
 		}
+		
+		if (hunger() > 0.5)
+			eat(10);
 	}
 }

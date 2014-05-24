@@ -2,6 +2,8 @@ package model;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class Inventory
 {
@@ -48,16 +50,23 @@ public class Inventory
 		return weight;
 	}
 	
-	public SimpleEntry<String,Integer> remove(String item, int weight)
+	public Entry<String,Integer> remove(String item, int weight)
 	{
 		if (storage.containsKey(item))
 		{
 			int contained = storage.get(item);
 			int removed = Math.min(weight, contained);
 			storage.put(item, contained-removed);
+			freeCapacity += removed;
+			usedCapacity -= removed;
 			return new SimpleEntry<String,Integer>(item, removed);
 		}
 		
 		return new SimpleEntry<String,Integer>(item, 0);
+	}
+	
+	public Set<String> items()
+	{
+		return storage.keySet();
 	}
 }
