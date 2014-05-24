@@ -12,7 +12,7 @@ public class ApplicationScheduler extends Scheduler
 	private static final long serialVersionUID = -6881984366833257439L;
 	
 	private GenericBehaviorActivator<ApplicationViewer> viewer;
-	private GenericBehaviorActivator<MobileAgent> agents;
+	private GenericBehaviorActivator<MaDKitAgent> agents;
 	/**
 	 * First behavior of the scheduler.
 	 * Add default behavior of every agents.
@@ -26,7 +26,7 @@ public class ApplicationScheduler extends Scheduler
 		viewer = new GenericBehaviorActivator<ApplicationViewer>("global","global","viewer","observe");
 		addActivator(viewer);
 		
-		agents = new GenericBehaviorActivator<MobileAgent>("global","global","mobileAgent","update");
+		agents = new GenericBehaviorActivator<MaDKitAgent>("global","global","mobileAgent","update");
 		addActivator(agents);
 		setDelay(5);
 		

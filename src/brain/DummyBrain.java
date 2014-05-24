@@ -12,6 +12,12 @@ public class DummyBrain extends Brain
 	@Override
 	public void update()
 	{
+		handleMessage();
+		if (hitbox().x == 10){
+			if (hunger() > 0.5)
+				eat(10);
+			return;}
+			
 		Vector2D mvment = new Vector2D(1,1);
 		
 		List<FixedObject> possibleCollisions = getCollisionAfterMovement(mvment);
@@ -26,5 +32,10 @@ public class DummyBrain extends Brain
 		
 		if (hunger() > 0.5)
 			eat(10);
+	}
+	
+	public void handleMessage()
+	{
+		//~ for (MessageContent mc : 
 	}
 }

@@ -1,5 +1,6 @@
 package model;
 
+import agents.AgentEntity;
 import model.object.ressource.Food;
 import quadtree.QuadTree;
 
@@ -16,6 +17,7 @@ public class Environnement
 	protected QuadTree<FixedObject> grid;
 	public final Dimension size;
 	public List<FixedObject> entities = new ArrayList<FixedObject>();
+	public List<AgentEntity> agents = new ArrayList<AgentEntity>();
 	
 	private int gridMaxDepth = 7;
 	
@@ -53,6 +55,11 @@ public class Environnement
 		entities.add(obj);
 	}
 	
+	public void add(AgentEntity agent)
+	{
+		agents.add(agent);
+	}
+	
 	public void addAll(FixedObject... objs)
 	{
 		for (FixedObject o : objs)
@@ -71,6 +78,11 @@ public class Environnement
 	public boolean remove(FixedObject obj)
 	{
 		return entities.remove(obj) && grid.remove(obj);
+	}
+	
+	public boolean remove(AgentEntity agent)
+	{
+		return agents.remove(agent);
 	}
 	
 	public List<FixedObject> collide(Rectangle bounds)

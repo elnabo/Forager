@@ -1,5 +1,7 @@
 package agents;
 
+import agents.message.MessageContent;
+import agents.message.RessourceMessage;
 import brain.Brain;
 import model.Environnement;
 import model.FixedObject;
@@ -9,6 +11,8 @@ import util.Vector2D;
 
 import madkit.kernel.AbstractAgent;
 import madkit.kernel.Agent;
+import madkit.kernel.Message;
+import madkit.message.ObjectMessage;
 
 
 import java.awt.geom.Point2D;
@@ -16,12 +20,16 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.ArrayDeque;
 
-public class MobileAgent extends AbstractAgent implements AgentEntity
+public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 {
 	private static final long serialVersionUID = -68366833257439L;
+	private static int count = 0;
+	
 	private final Color col = Color.BLUE;
 	
 	protected double maxSteeringChange = 0.5;
@@ -36,33 +44,55 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	protected int hunger = 0;
 	protected int maxHunger = 100;
 	
+	private int id;
+	private String team;
+	private ArrayDeque<MessageContent> messageBox = new ArrayDeque<MessageContent>();
 	
-	public MobileAgent(Environnement environnement, Brain brain)
+	public MaDKitAgent(Environnement environnement, Brain brain)
 	{
 		this.environnement = environnement;
 		hitbox = new Rectangle(20,20,5,5);
-		this.brain = brain.init(this);
+		id = count++;
+		team = "";
+		this.brain = brain;
+		//~ this.brain = brain.init(this);
 	}
 	
-	public MobileAgent(Environnement environnement, Point pos, Brain brain)
+	public MaDKitAgent(Environnement environnement, Point pos, Brain brain)
 	{
 		this.environnement = environnement;
 		hitbox = new Rectangle(pos.x, pos.y,5,5);
-		this.brain = brain.init(this);
+		id = count++;
+		team = "";
+		this.brain = brain;
+		//~ this.brain = brain.init(this);
 	}
 	
 	@Override
 	protected void activate()
 	{
-		requestRole("global","global","mobileAgent");
+		requestRole(defaultCommunity, defaultGroup, defaultRole);
+		requestRole(defaultCommunity, defaultGroup, id + "");
+		requestRole(defaultCommunity, team, id + "");
 		inventory = new Inventory(100);
 		inventory.add("food",50);
+		brain.init(this);
+		environnement.add(this);
 	}
 	
 	@Override
 	public int add(String item, int weight)
 	{
 		return inventory.add(item,weight);
+	}
+	
+	private boolean collide(AgentEntity ae, Rectangle b)
+	{
+		Rectangle a = ae.hitbox();
+		return a.x + a.width > b.x &&
+				a.y + a.height > b.y &&
+				a.x < b.x + b.width &&
+				a.y < b.y + b.height;
 	}
 	
 	public final Color color()
@@ -79,6 +109,7 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	@Override
 	public void die()
 	{
+		environnement.remove(this);
 		killAgent(this);
 	}
 	
@@ -94,6 +125,15 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	public void eat(int quantity)
 	{
 		hunger = Math.max(0,hunger - inventory.remove("food",quantity).getValue());
+	}
+	
+	@Override
+	public void give(AgentInfo ai, String item, int quantity)
+	{
+		sendMessage(defaultCommunity,defaultGroup,ai.id + "",
+				new ObjectMessage<RessourceMessage>(new RessourceMessage(
+				item, inventory.remove(item,quantity).getValue(), info()))
+				);
 	}
 
 	@Override
@@ -111,11 +151,31 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 		return getCollision(box);
 	}
 	
-	//~ @Override
-	//~ public List<AgentEntity> getVisibleNeighbors()
-	//~ {
-		//~ return null;
-	//~ }
+	@Override
+	public List<MessageContent> getMessages()
+	{
+		List<MessageContent> messages = new ArrayList<MessageContent>();
+		while (!messageBox.isEmpty())
+		{
+			messages.add(messageBox.poll());
+		}
+		return messages;
+	}
+	
+	@Override
+	public List<AgentInfo> getVisibleAgents()
+	{
+		List<AgentInfo> agents = new ArrayList<AgentInfo>();
+		Rectangle visionBox = new Rectangle(hitbox.x - visionRange,
+			hitbox.y - visionRange,	hitbox.width + 2 * visionRange,
+			hitbox.height + 2 * visionRange);
+		for (AgentEntity a : environnement.agents)
+		{
+			if (collide(a, visionBox))
+				agents.add(a.info());
+		}
+		return agents;
+	}
 	
 	@Override
 	public List<FixedObject> getVisibleObjects()
@@ -123,6 +183,29 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 		return environnement.collide(new Rectangle(hitbox.x - visionRange,
 			hitbox.y - visionRange,	hitbox.width + 2 * visionRange,
 			hitbox.height + 2 * visionRange));
+	}
+	
+	private void handleMessage()
+	{
+		while (!isMessageBoxEmpty())
+		{
+			Message m = nextMessage();
+			if (m instanceof ObjectMessage)
+			{
+				Object o = ((ObjectMessage)m).getContent();
+				if (o instanceof MessageContent)
+				{
+					messageBox.add((MessageContent)(o));
+					if (o instanceof RessourceMessage)
+					{
+						RessourceMessage rm = (RessourceMessage)o;
+						int added = add(rm.item, rm.quantity);
+						if (!rm.reply && added != rm.quantity)
+							give(rm.sender, rm.item, rm.quantity - added);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -142,6 +225,7 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 				harvested += ((Harvestable)i).harvest(this);
 			}
 		}
+		//~ give(new AgentInfo(new Rectangle(0,0),"",1), "food",harvested);
 		return harvested;
 	}
 	
@@ -170,6 +254,12 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	public AgentInfo info()
+	{
+		return new AgentInfo(hitbox, team(), id);
+	}
+	
+	@Override
 	public final void moveBy(Vector2D mvment)
 	{
 		if (mvment.norm() > 1)
@@ -192,9 +282,16 @@ public class MobileAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	public String team()
+	{
+		return team;
+	}
+	
+	@Override
 	public void update() 
 	{ 
 		increaseHunger();
+		handleMessage();
 		brain.update();
 	}
 	

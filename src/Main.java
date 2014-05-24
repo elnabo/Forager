@@ -1,6 +1,6 @@
 import agents.ApplicationViewer;
 import agents.ApplicationScheduler;
-import agents.MobileAgent;
+import agents.MaDKitAgent;
 import brain.DummyBrain;
 import model.Environnement;
 import model.object.obstacle.Wall;
@@ -12,6 +12,7 @@ import madkit.kernel.Agent;
 import madkit.kernel.Madkit;
 import madkit.kernel.Madkit.Option;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Main
@@ -20,7 +21,8 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-		Madkit kernel = new Madkit("--noAgentConsoleLog --desktopFrameClass");
+		Madkit kernel = new Madkit("--desktopFrameClass");
+		//~ Madkit kernel = new Madkit("--noAgentConsoleLog --desktopFrameClass");
 		ApplicationViewer viewer = new ApplicationViewer();
 		kernel.doAction(KernelAction.LAUNCH_AGENT, new ApplicationScheduler());
 		kernel.doAction(KernelAction.LAUNCH_AGENT, viewer);
@@ -57,6 +59,7 @@ public class Main
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
 		viewer.init(environnement, envUI);
 		
-		kernel.doAction(KernelAction.LAUNCH_AGENT, new MobileAgent(environnement, new DummyBrain()));
+		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement, new DummyBrain()));
+		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement,new Point(7,7),new DummyBrain()));
 	}
 }

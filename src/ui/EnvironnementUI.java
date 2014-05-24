@@ -24,6 +24,8 @@ public class EnvironnementUI
 				scaleY = ((float)size.height) / environnement.size.height;
 		for (FixedObject obj : new ArrayList<FixedObject>(environnement.entities))
 		{
+			if (obj == null)
+				continue;
 			Rectangle rect = obj.bounds();
 			int sx = Math.round(rect.x * scaleX),
 				ex = Math.round((rect.x + rect.width) * scaleX),

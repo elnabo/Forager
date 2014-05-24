@@ -1,6 +1,8 @@
 package brain;
 
 import agents.AgentEntity;
+import agents.AgentInfo;
+import agents.message.MessageContent;
 import model.FixedObject;
 import util.Vector2D;
 
@@ -34,6 +36,11 @@ public abstract class Brain
 		parent.eat(quantity);
 	}
 	
+	public final void give(AgentInfo ai, String item, int quantity)
+	{
+		parent.give(ai, item, quantity);
+	}
+	
 	public List<FixedObject> getCollision()
 	{
 		return parent.getCollision(parent.hitbox());
@@ -44,10 +51,15 @@ public abstract class Brain
 		return parent.getCollisionAfterMovement(mvment);
 	}
 	
-	//~ public List<AgentEntity> getVisibleNeighbors()
-	//~ {
-		//~ return parent.getVisibleNeighbors();
-	//~ }
+	public List<MessageContent> getMessages()
+	{
+		return parent.getMessages();
+	}
+	
+	public List<AgentInfo> getVisibleAgents()
+	{
+		return parent.getVisibleAgents();
+	}
 	
 	public List<FixedObject> getVisibleObjects()
 	{
@@ -59,6 +71,11 @@ public abstract class Brain
 		return parent.harvest();
 	}
 	
+	public final Rectangle hitbox()
+	{
+		return parent.hitbox();
+	}
+	
 	public final double hunger()
 	{
 		return parent.hunger();
@@ -67,6 +84,11 @@ public abstract class Brain
 	public final void moveBy(Vector2D direction)
 	{
 		parent.moveBy(direction);
+	}
+	
+	public final boolean isTeamMate(AgentInfo ai)
+	{
+		return ai.equals(parent.team());
 	}
 	
 	public abstract void update();

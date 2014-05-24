@@ -35,6 +35,9 @@ public class Inventory
 		return (storage.containsKey(item)) ? storage.get(item) : 0;
 	}
 	
+	/**
+	 * Return the quantity added
+	 */
 	public int add(String item, int weight)
 	{
 		if (weight > freeCapacity)

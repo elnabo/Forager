@@ -23,16 +23,16 @@ public class ApplicationViewer extends SwingViewer
 	private EnvironnementUI ui;
 	private Dimension frameSize = new Dimension(500,500);
 	public Dimension size = new Dimension(0,0);
-	private PropertyProbe<MobileAgent,Rectangle> mobileProbe;
+	private PropertyProbe<MaDKitAgent,Rectangle> mobileProbe;
 	
 	@Override
 	protected void activate()
 	{
 		requestRole("global","global","viewer");
-		mobileProbe = new PropertyProbe<MobileAgent, Rectangle>("global","global","mobileAgent","hitbox")
+		mobileProbe = new PropertyProbe<MaDKitAgent, Rectangle>("global","global","mobileAgent","hitbox")
 		{
 			@Override
-			public void adding(MobileAgent agent) 
+			public void adding(MaDKitAgent agent) 
 			{
 				super.adding(agent);
 			}
@@ -56,7 +56,7 @@ public class ApplicationViewer extends SwingViewer
 		}
 		
 		//~ g.setColor(Color.BLUE);
-		for(final MobileAgent ma : mobileProbe.getCurrentAgentsList())
+		for(final MaDKitAgent ma : mobileProbe.getCurrentAgentsList())
 		{
 			g.setColor(ma.color());
 			int sx = ma.hitbox.x,
