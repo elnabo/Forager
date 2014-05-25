@@ -48,8 +48,7 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	private int id;
 	private String team;
 	private ArrayDeque<MessageContent> messageBox = new ArrayDeque<MessageContent>();
-	
-	private boolean first = true;
+	private ArrayList<MessageContent> messageVerification = new ArrayList<MessageContent>();
 	
 	public MaDKitAgent(Environnement environnement, Brain brain)
 	{
@@ -116,6 +115,8 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	@Override
 	public boolean copulate(AgentInfo other)
 	{
+		if (!other.team.equals(team))
+			return false;
 		AgentEntity otherEntity = getAgent(other.id);
 		if (otherEntity == null)
 			return false;
@@ -133,7 +134,6 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 		{
 			inventory.remove(foodType,halfChildCost);
 			otherInventory.remove(foodType,halfChildCost);
-			System.out.println(inventory.getCapacity(foodType));
 			return true;
 		}
 		return false;
@@ -145,7 +145,6 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 		try
 		{
 			 ReturnCode rc = launchAgent(new MaDKitAgent(environnement, pos, brain.getClass().newInstance()));
-			 first = false;
 			 return rc == ReturnCode.SUCCESS;
 
 		}
@@ -212,10 +211,12 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	public List<MessageContent> getMessages()
 	{
 		List<MessageContent> messages = new ArrayList<MessageContent>();
+		messageVerification.clear();
 		while (!messageBox.isEmpty())
 		{
 			messages.add(messageBox.poll());
 		}
+		messageVerification.addAll(messages);
 		return messages;
 	}
 	
@@ -228,7 +229,7 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 			hitbox.height + 2 * visionRange);
 		for (AgentEntity a : environnement.agents)
 		{
-			if (collide(a, visionBox))
+			if (collide(a, visionBox) && a!=this)
 				agents.add(a.info());
 		}
 		return agents;
@@ -295,6 +296,12 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	public boolean haveMessage()
+	{
+		return !messageBox.isEmpty();
+	}
+	
+	@Override
 	public final Rectangle hitbox()
 	{
 		return new Rectangle(hitbox);
@@ -337,6 +344,12 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	public boolean isMessage(MessageContent message)
+	{
+		return messageVerification.contains(message);
+	}
+	
+	@Override
 	public final Vector2D moveBy(Vector2D mvment)
 	{
 		if (mvment.norm() > 1)
@@ -376,9 +389,9 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	@Override
 	public void update() 
 	{ 
-		increaseHunger();
 		handleMessage();
 		brain.update();
+		increaseHunger();
 	}
 	
 }

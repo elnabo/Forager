@@ -36,11 +36,13 @@ public interface AgentEntity
 	List<AgentInfo> getVisibleAgents();
 	List<FixedObject> getVisibleObjects();
 	int harvest();
+	boolean haveMessage();
 	Rectangle hitbox();
 	double hunger();
 	void increaseHunger();
 	AgentInfo info();
 	Inventory inventory();
+	boolean isMessage(MessageContent message);
 	Vector2D moveBy(Vector2D direction);
 	void sendMessage(MessageContent message, AgentInfo ai);
 	String team();

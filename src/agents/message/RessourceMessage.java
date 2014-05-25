@@ -2,31 +2,31 @@ package agents.message;
 
 import agents.AgentInfo;
 
-public final class RessourceMessage implements MessageContent
+public final class RessourceMessage extends MessageContent
 {
 	public final String item;
 	public final int quantity;
-	public final AgentInfo sender;
 	public final boolean reply;
 	
 	public RessourceMessage(String item, int quantity, AgentInfo sender)
 	{
+		super(sender);
 		this.item = item;
 		this.quantity = quantity;
-		this.sender = sender;
 		this.reply = false;
 	}
 	
 	public RessourceMessage(String item, int quantity, AgentInfo sender, boolean reply)
 	{
+		super(sender);
 		this.item = item;
 		this.quantity = quantity;
-		this.sender = sender;
 		this.reply = reply;
 	}
 	
-	public Class<MessageContent> getReplyClass()
+	@Override
+	public String type()
 	{
-		return null;
+		return this.getClass().getSimpleName();
 	}
 }

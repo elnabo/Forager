@@ -2,7 +2,10 @@ package brain;
 
 import agents.AgentEntity;
 import agents.AgentInfo;
+import agents.message.CopulationOffer;
 import agents.message.MessageContent;
+import agents.message.Reply;
+import agents.message.RequireFoodMessage;
 import model.FixedObject;
 import util.Vector2D;
 
@@ -23,7 +26,28 @@ public abstract class Brain
 	
 	public final void broadcast(MessageContent message)
 	{
+		if (message instanceof Reply)
+			return;
 		parent.broadcast(message);
+	}
+	
+	public final MessageContent createCopulationMessage()
+	{
+		return new CopulationOffer(parent.info());
+	}
+	
+	public final MessageContent createFoodRequestMessage()
+	{
+		return new RequireFoodMessage(parent.info());
+	}
+	
+	
+	public final boolean copulate(MessageContent reply)
+	{
+		if (!(reply instanceof Reply) || !parent.isMessage(reply))
+			return false;
+			
+		return parent.copulate(reply.sender);		
 	}
 	
 	public final void die()
@@ -55,8 +79,8 @@ public abstract class Brain
 	
 	public final boolean give(AgentInfo ai, String item, int quantity)
 	{
-		if (((System.currentTimeMillis() - ai.timestamp) < 50) &&
-			(distance(ai) < 10))
+		if ((((System.currentTimeMillis() - ai.timestamp) < 50) &&
+			(distance(ai) < 10)) || true)
 		{
 			parent.give(ai, item, quantity);
 			return true;
@@ -64,29 +88,39 @@ public abstract class Brain
 		return false;
 	}
 	
-	public List<FixedObject> getCollision()
+	public final List<FixedObject> getCollision()
 	{
 		return parent.getCollision(parent.hitbox());
 	}
 	
-	public List<FixedObject> getCollisionAfterMovement(Vector2D mvment)
+	public final List<FixedObject> getCollisionAfterMovement(Vector2D mvment)
 	{
 		return parent.getCollisionAfterMovement(mvment);
 	}
 	
-	public List<MessageContent> getMessages()
+	public final int getQuantity(String item)
+	{
+		return parent.inventory().getCapacity(item);
+	}
+	
+	public final List<MessageContent> getMessages()
 	{
 		return parent.getMessages();
 	}
 	
-	public List<AgentInfo> getVisibleAgents()
+	public final List<AgentInfo> getVisibleAgents()
 	{
 		return parent.getVisibleAgents();
 	}
 	
-	public List<FixedObject> getVisibleObjects()
+	public final List<FixedObject> getVisibleObjects()
 	{
 		return parent.getVisibleObjects();
+	}
+	
+	public final boolean haveMessage()
+	{
+		return parent.haveMessage();
 	}
 	
 	public final int harvest()
@@ -114,10 +148,18 @@ public abstract class Brain
 		parent.moveBy(direction);
 	}
 	
-	//~ public final void replyMessage(MessageContent message, AgentInfo ai)
+	public final void replyTo(MessageContent origin, boolean value)
+	{
+		if (parent.isMessage(origin) && !(origin instanceof Reply))
+		{
+			parent.sendMessage(new Reply(parent.info(),value,origin),origin.sender);
+		}
+	}
 	
 	public final void sendMessage(MessageContent message, AgentInfo ai)
 	{
+		if (message instanceof Reply)
+			return;
 		parent.sendMessage(message,ai);
 	}
 	
