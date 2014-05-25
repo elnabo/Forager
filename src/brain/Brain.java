@@ -79,8 +79,8 @@ public abstract class Brain
 	
 	public final boolean give(AgentInfo ai, String item, int quantity)
 	{
-		if ((((System.currentTimeMillis() - ai.timestamp) < 50) &&
-			(distance(ai) < 10)) || true)
+		if (((System.currentTimeMillis() - ai.timestamp) < 50) &&
+			(distance(ai) < 10))
 		{
 			parent.give(ai, item, quantity);
 			return true;
