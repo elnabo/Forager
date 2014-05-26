@@ -31,6 +31,11 @@ public abstract class Brain
 		parent.broadcast(message);
 	}
 	
+	public final boolean canHarvest()
+	{
+		return parent.canHarvest();
+	}
+	
 	public final MessageContent createCopulationMessage()
 	{
 		return new CopulationOffer(parent.info());
@@ -93,11 +98,6 @@ public abstract class Brain
 		return parent.getCollision(parent.hitbox());
 	}
 	
-	public final List<FixedObject> getCollisionAfterMovement(Vector2D mvment)
-	{
-		return parent.getCollisionAfterMovement(mvment);
-	}
-	
 	public final int getQuantity(String item)
 	{
 		return parent.inventory().getCapacity(item);
@@ -143,9 +143,9 @@ public abstract class Brain
 		return ai.equals(parent.team());
 	}
 	
-	public final void moveBy(Vector2D direction)
+	public final Vector2D moveBy(Vector2D direction)
 	{
-		parent.moveBy(direction);
+		return parent.moveBy(direction);
 	}
 	
 	public final void replyTo(MessageContent origin, boolean value)

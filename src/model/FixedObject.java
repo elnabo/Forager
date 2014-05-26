@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 
 public abstract class FixedObject implements QuadTreeElement
 {
-	protected Rectangle bounds;
+	protected Rectangle hitbox;
 	protected Point position;
 	protected Environnement environnement;
 	
@@ -16,18 +16,18 @@ public abstract class FixedObject implements QuadTreeElement
 	{
 		environnement = env;
 		this.position = new Point(pos);
-		bounds = new Rectangle(pos.x, pos.y, hitbox.width, hitbox.height);
+		this.hitbox = new Rectangle(pos.x, pos.y, hitbox.width, hitbox.height);
 	}
-	public FixedObject(Environnement env, Rectangle bounds)
+	public FixedObject(Environnement env, Rectangle hitbox)
 	{
 		environnement = env;
-		position = new Point(bounds.x, bounds.y);
-		this.bounds = new Rectangle(bounds);
+		position = new Point(hitbox.x, hitbox.y);
+		this.hitbox = new Rectangle(hitbox);
 	}
 	
-	public Rectangle bounds()
+	public Rectangle hitbox()
 	{
-		return new Rectangle(bounds);
+		return new Rectangle(hitbox);
 	}
 	
 	public Point getPosition()

@@ -85,13 +85,13 @@ public class Environnement
 		return agents.remove(agent);
 	}
 	
-	public List<FixedObject> collide(Rectangle bounds)
+	public List<FixedObject> collide(Rectangle hitbox)
 	{
 		List<FixedObject> trueCollision = new ArrayList<FixedObject>();
-		List<FixedObject> possible = grid.getPossibleCollisions(bounds);
+		List<FixedObject> possible = grid.getPossibleCollisions(hitbox);
 		for (FixedObject obj : possible)
 		{
-			if (collide(obj.bounds(), bounds))
+			if (collide(obj.hitbox(), hitbox))
 			{
 				trueCollision.add(obj);
 			}

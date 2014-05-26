@@ -9,8 +9,6 @@ public abstract class MessageContent
 	
 	public MessageContent(AgentInfo sender) { this.sender = sender;}
 	
-	//~ Class<MessageContent> getReplyClass();
-	//~ Reply reply(boolean value);
 	public boolean isReply() { return false;}
 	public String type() { return getClass().getSimpleName();}
 }

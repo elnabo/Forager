@@ -10,7 +10,8 @@ import java.util.List;
 public class DummyBrain extends Brain
 {
 	
-	boolean hadChild = false;
+	java.util.Random a = new java.util.Random(50);
+	java.util.Random b = new java.util.Random(846532);
 	
 	@Override
 	public void update()
@@ -28,18 +29,13 @@ public class DummyBrain extends Brain
 			}
 			return;}
 			
-		java.util.Random a = new java.util.Random();
-		Vector2D mvment = new Vector2D(Math.round(a.nextFloat()),Math.round(a.nextFloat()));
-		//~ Vector2D mvment = new Vector2D(1,1);
-		
-		List<FixedObject> possibleCollisions = getCollisionAfterMovement(mvment);
-		if (possibleCollisions != null && possibleCollisions.size() != 0)
+		int i = Math.round(a.nextFloat()),
+			j = Math.round(b.nextFloat());
+			
+		Vector2D mvment = new Vector2D(i,j);
+		if (mvment != moveBy(mvment))
 		{
 			harvest();
-		}
-		else
-		{
-			moveBy(mvment);
 		}
 		
 		if (hunger() > 0.5)

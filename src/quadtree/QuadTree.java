@@ -36,7 +36,7 @@ public class QuadTree<T extends QuadTreeElement>
 	
 	public boolean add(T element)
 	{
-		if (!insideBoundaries(element.bounds()))
+		if (!insideBoundaries(element.hitbox()))
 			return false;
 		
 		allEntities.add(element);
@@ -64,7 +64,7 @@ public class QuadTree<T extends QuadTreeElement>
 	public boolean remove(T element)
 	{
 		allEntities.remove(element);
-		return entities.remove(element) || children.get(getIndex(element.bounds())).remove(element);
+		return entities.remove(element) || children.get(getIndex(element.hitbox())).remove(element);
 	}
 	
 	public List<T> getPossibleCollisions(Rectangle bounds)

@@ -16,6 +16,7 @@ import madkit.kernel.Message;
 import madkit.message.ObjectMessage;
 
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.Color;
 import java.awt.Point;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ArrayDeque;
 
-public final class MaDKitAgent extends AbstractAgent implements AgentEntity
+public final class MaDKitAgent extends Agent implements AgentEntity
 {
 	private static final long serialVersionUID = -68366833257439L;
 	public static int count = 0;
@@ -80,7 +81,6 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 		requestRole(defaultCommunity, defaultGroup, defaultRole);
 		requestRole(defaultCommunity, defaultGroup, id + "");
 		requestRole(defaultCommunity, team, id + "");
-		//~ environnement.add(this);
 	}
 	
 	@Override
@@ -98,6 +98,17 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 		}
 	}
 	
+	@Override
+	public boolean canHarvest()
+	{
+		for (FixedObject o : environnement.collide(new Rectangle(hitbox.x-1, hitbox.y-1, hitbox.width+2, hitbox.height+2)))
+		{
+			if (o.harvestable())
+				return true;
+		}
+		return false;
+	}
+	
 	private boolean collide(AgentEntity ae, Rectangle b)
 	{
 		Rectangle a = ae.hitbox();
@@ -107,6 +118,7 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 				a.y < b.y + b.height;
 	}
 	
+	@Override
 	public final Color color()
 	{
 		return col;
@@ -350,26 +362,37 @@ public final class MaDKitAgent extends AbstractAgent implements AgentEntity
 	}
 	
 	@Override
+	protected void live()
+	{
+		while (true)
+		{
+			update();
+			pause(6);
+		}
+	}
+	
+	@Override
 	public final Vector2D moveBy(Vector2D mvment)
 	{
 		if (mvment.norm() > 1)
-			mvment = mvment.unitVector();//.scalarMul(maxSpeed);
-		if (mvment.norm() < 0)
+			mvment = mvment.unitVector();
+		if (mvment.norm() <= 0.001)
 			return new Vector2D(0,0);
 			
-		List<FixedObject> collision = getCollisionAfterMovement(mvment);
-		// colliding
-		if (collision != null && collision.size() > 0)
+			
+		double i =0.1;
+		do
 		{
-			direction = new Vector2D(0,0);
-		}
-		else
-		{
-			direction = new Vector2D(mvment);
-			hitbox.x += (int)Math.round(mvment.x);
-			hitbox.y += (int)Math.round(mvment.y);
-		}
-		
+			List<FixedObject> collision = getCollisionAfterMovement(mvment.scalarMul(i));
+			if (collision != null && collision.size() > 0)
+			{
+				break;
+			}
+			i+=0.1;
+		} while (i<=1.0);
+		direction =  mvment.scalarMul(i-0.1);
+		hitbox.x += (int)Math.round(direction.x);
+		hitbox.y += (int)Math.round(direction.y);
 		return new Vector2D(direction);
 	}
 	

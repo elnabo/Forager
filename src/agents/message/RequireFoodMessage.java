@@ -8,16 +8,4 @@ public class RequireFoodMessage extends MessageContent
 	{
 		super(sender);
 	}
-	
-	@Override
-	public boolean isReply()
-	{
-		return false;
-	}
-	
-	@Override
-	public String type()
-	{
-		return getClass().getSimpleName();
-	}
 }

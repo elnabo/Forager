@@ -4,5 +4,5 @@ import java.awt.Rectangle;
 
 public interface QuadTreeElement
 {
-	public Rectangle bounds();
+	public Rectangle hitbox();
 }

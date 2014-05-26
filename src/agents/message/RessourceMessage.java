@@ -23,10 +23,4 @@ public final class RessourceMessage extends MessageContent
 		this.quantity = quantity;
 		this.reply = reply;
 	}
-	
-	@Override
-	public String type()
-	{
-		return this.getClass().getSimpleName();
-	}
 }

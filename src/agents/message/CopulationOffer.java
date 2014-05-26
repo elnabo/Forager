@@ -8,16 +8,4 @@ public class CopulationOffer extends MessageContent
 	{
 		super(sender);
 	}
-	
-	@Override
-	public boolean isReply()
-	{
-		return false;
-	}
-	
-	@Override
-	public String type()
-	{
-		return this.getClass().getSimpleName();
-	}
 }

@@ -206,5 +206,14 @@ public class Vector2D
 	{
 		return "x = " + x + ", y = " + y;
 	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other == null) { return false;}
+		if (!(other instanceof Vector2D)) { return false;}
+		Vector2D o = (Vector2D) other;
+		return Math.abs(o.x - x) < 0.001 && Math.abs(o.y -y) < 0.001;
+	}
 
 }

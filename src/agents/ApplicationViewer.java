@@ -54,17 +54,6 @@ public class ApplicationViewer extends SwingViewer
 		{
 			ui.drawOn(g,size);
 		}
-		
-		//~ g.setColor(Color.BLUE);
-		for(final MaDKitAgent ma : mobileProbe.getCurrentAgentsList())
-		{
-			g.setColor(ma.color());
-			int sx = ma.hitbox.x,
-				ex = ma.hitbox.x + ma.hitbox.width,
-				sy = ma.hitbox.y,
-				ey = ma.hitbox.y + ma.hitbox.height;
-			g.fillPolygon(new int[]{sx,ex,ex,sx}, new int[]{sy,sy,ey,ey},4);
-		}
 	}
 	
 	@Override

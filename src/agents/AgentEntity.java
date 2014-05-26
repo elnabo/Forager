@@ -5,6 +5,7 @@ import model.FixedObject;
 import model.Inventory;
 import util.Vector2D;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
@@ -21,6 +22,8 @@ public interface AgentEntity
 	
 	int add(String item, int weight); 
 	void broadcast(MessageContent message);
+	boolean canHarvest();
+	Color color();
 	boolean copulate(AgentInfo ai);
 	boolean createAgent(Point pos);
 	void die();
