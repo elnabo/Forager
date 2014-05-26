@@ -3,6 +3,7 @@ package brain;
 import agents.AgentEntity;
 import agents.AgentInfo;
 import agents.message.CopulationOffer;
+import agents.message.LocationMessage;
 import agents.message.MessageContent;
 import agents.message.Reply;
 import agents.message.RequireFoodMessage;
@@ -46,6 +47,10 @@ public abstract class Brain
 		return new RequireFoodMessage(parent.info());
 	}
 	
+	public final MessageContent createLocationMessage(Rectangle position, String item)
+	{
+		return new LocationMessage(parent.info(),position,item);
+	}
 	
 	public final boolean copulate(MessageContent reply)
 	{
