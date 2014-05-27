@@ -1,4 +1,4 @@
-import agents.MaDKitAgent;
+import agents.MadkitAgent;
 import brain.Brain;
 import model.Environnement;
 import model.object.obstacle.Wall;
@@ -44,12 +44,12 @@ public class Main
 		SwingUtilities.invokeLater(envUI);
 	}
 	
-	public static void launchMaDKitAgent(Point pos, Brain brain)
+	public static void launchMadkitAgent(Point pos, Brain brain)
 	{
 		if (kernel == null)
 			kernel = new Madkit("--noAgentConsoleLog true --madkitLogLevel OFF --desktopFrameClass null");
 		
-		kernel.doAction(KernelAction.LAUNCH_AGENT, new MaDKitAgent(environnement,pos, brain));
+		kernel.doAction(KernelAction.LAUNCH_AGENT, new MadkitAgent(environnement,pos, brain));
 	}
 	
 	public static void main(String[] args)
@@ -60,8 +60,8 @@ public class Main
 		try
 		{
 			Class<?> cls = Class.forName(brain);
-			launchMaDKitAgent(new Point(20,20), (Brain)(cls.newInstance()));
-			launchMaDKitAgent(new Point(7,7), (Brain)(cls.newInstance()));
+			launchMadkitAgent(new Point(20,20), (Brain)(cls.newInstance()));
+			launchMadkitAgent(new Point(7,7), (Brain)(cls.newInstance()));
 		}
 		catch (InstantiationException e)
 		{

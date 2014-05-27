@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ArrayDeque;
 
-public final class MaDKitAgent extends Agent implements AgentEntity
+public final class MadkitAgent extends Agent implements AgentEntity
 {
 	private static final long serialVersionUID = -68366833257439L;
 	public static int count = 0;
@@ -51,7 +51,7 @@ public final class MaDKitAgent extends Agent implements AgentEntity
 	private ArrayDeque<MessageContent> messageBox = new ArrayDeque<MessageContent>();
 	private ArrayList<MessageContent> messageVerification = new ArrayList<MessageContent>();
 	
-	public MaDKitAgent(Environnement environnement, Brain brain)
+	public MadkitAgent(Environnement environnement, Brain brain)
 	{
 		this.environnement = environnement;
 		hitbox = new Rectangle(20,20,width, height);
@@ -63,7 +63,7 @@ public final class MaDKitAgent extends Agent implements AgentEntity
 		environnement.add(this);
 	}
 	
-	public MaDKitAgent(Environnement environnement, Point pos, Brain brain)
+	public MadkitAgent(Environnement environnement, Point pos, Brain brain)
 	{
 		this.environnement = environnement;
 		hitbox = new Rectangle(pos.x, pos.y,width, height);
@@ -156,7 +156,7 @@ public final class MaDKitAgent extends Agent implements AgentEntity
 	{
 		try
 		{
-			 ReturnCode rc = launchAgent(new MaDKitAgent(environnement, pos, brain.getClass().newInstance()));
+			 ReturnCode rc = launchAgent(new MadkitAgent(environnement, pos, brain.getClass().newInstance()));
 			 return rc == ReturnCode.SUCCESS;
 
 		}
