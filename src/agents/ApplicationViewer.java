@@ -52,7 +52,7 @@ public class ApplicationViewer extends SwingViewer
 	{	
 		if (ui != null)
 		{
-			ui.drawOn(g,size);
+			//~ ui.drawOn(g);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package brain;
 
-//~ import agents.AgentEntity;
 import agents.message.*;
 import model.FixedObject;
 import util.Vector2D;
@@ -31,6 +30,8 @@ public class DummyBrain extends Brain
 			
 		int i = Math.round(a.nextFloat()),
 			j = Math.round(b.nextFloat());
+			
+		i = 1;j=1;
 			
 		Vector2D mvment = new Vector2D(i,j);
 		if (mvment != moveBy(mvment))

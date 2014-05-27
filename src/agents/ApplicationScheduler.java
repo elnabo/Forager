@@ -22,8 +22,8 @@ public class ApplicationScheduler extends Scheduler
 		createGroup("global","global");
 		requestRole("global","global","scheduler");
 		
-		viewer = new GenericBehaviorActivator<ApplicationViewer>("global","global","viewer","observe");
-		addActivator(viewer);
+		//~ viewer = new GenericBehaviorActivator<ApplicationViewer>("global","global","viewer","observe");
+		//~ addActivator(viewer);
 		setDelay(5);
 		
 		receiveMessage(new SchedulingMessage(SchedulingAction.RUN));

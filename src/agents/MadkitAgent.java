@@ -379,7 +379,6 @@ public final class MaDKitAgent extends Agent implements AgentEntity
 		if (mvment.norm() <= 0.001)
 			return new Vector2D(0,0);
 			
-			
 		double i =0.1;
 		do
 		{
@@ -391,6 +390,7 @@ public final class MaDKitAgent extends Agent implements AgentEntity
 			i+=0.1;
 		} while (i<=1.0);
 		direction =  mvment.scalarMul(i-0.1);
+		
 		hitbox.x += (int)Math.round(direction.x);
 		hitbox.y += (int)Math.round(direction.y);
 		return new Vector2D(direction);
