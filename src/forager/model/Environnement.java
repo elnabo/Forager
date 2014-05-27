@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 public class Environnement
 {
+	private static int count = 0;
 	protected QuadTree<FixedObject> grid;
 	public final Dimension size;
 	public List<FixedObject> entities = new ArrayList<FixedObject>();
@@ -73,6 +74,11 @@ public class Environnement
 	{
 		grid.addAll(objs);
 		entities.addAll(objs);
+	}
+	
+	synchronized public static int getCount()
+	{
+		return count++;
 	}
 	
 	public boolean remove(FixedObject obj)

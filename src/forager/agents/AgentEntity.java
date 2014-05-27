@@ -77,6 +77,16 @@ public interface AgentEntity
 	boolean canHarvest();
 	
 	/**
+	 * Test if an agent collide with a given hitbox.
+	 * 
+	 * @param ae  The agent.
+	 * @param box  The hitbox.
+	 * 
+	 * @return True if the agent collide, else false.
+	 */
+	boolean collide(AgentEntity ae, Rectangle box);
+	
+	/**
 	 * Return the color of the agent.
 	 * Used only by the UI.
 	 * 
@@ -207,6 +217,16 @@ public interface AgentEntity
 	 */
 	List<FixedObject> getVisibleObjects();
 	
+	
+	/**
+	 * Preprocess the message recieved.
+	 * 
+	 * <p> The {@link forager.agents.message.RessourceMessage RessourceMessage}
+	 * will be added to the inventory and if there is too much it's automaticaly
+	 * send back.</p>
+	 */
+	void handleMessage();
+	
 	/**
 	 * Harvest the maximum ressource of this type who collide
 	 * with the entity.
@@ -240,6 +260,8 @@ public interface AgentEntity
 	
 	/**
 	 * Increase the level of hunger.
+	 * 
+	 * Kill the agents if it's too high.
 	 */
 	void increaseHunger();
 	
