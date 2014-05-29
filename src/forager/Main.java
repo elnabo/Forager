@@ -6,6 +6,7 @@ import forager.model.Environnement;
 import forager.model.object.obstacle.Wall;
 import forager.model.object.ressource.Food;
 import forager.ui.EnvironnementUI;
+import forager.util.SimplexNoise;
 
 import madkit.action.KernelAction;
 import madkit.kernel.Madkit;
@@ -29,6 +30,30 @@ public class Main
 	private static Environnement environnement;
 	
 	/**
+	 * Generate a random map
+	 * 
+	 * @param size  The number of tile x/y.
+	 */
+	public static void randomMap(Dimension size)
+	{
+		for (int i=1; i<size.width-1; i++)
+		{
+			for (int j=1; j<size.height-1; j++)
+			{
+				// Safe zone for spawn.
+				if (i<8 && j<8)
+					continue;
+				double noise = SimplexNoise.noise(i,j);
+				if (noise < -0.7)
+					environnement.add(new Wall(environnement, new Rectangle(i*5,j*5,5,5)));
+				else if (noise > 0.8)
+					environnement.add(new Food(environnement, new Rectangle(i*5,j*5,5,5)));
+			}
+		}
+	}
+	
+	
+	/**
 	 * Initialize the game.
 	 * 
 	 * @param size  The size of the environnement.
@@ -37,7 +62,9 @@ public class Main
 	{
 		environnement = new Environnement(size);
 		
-		// Add obstacles
+		randomMap(new Dimension(size.width/5, size.height/5));
+		
+		// Add external walls
 		for(int i=0; i<= size.width; i+=5)
 		{
 			environnement.add(new Wall(environnement, new Rectangle(i,0,5,5)));
@@ -49,6 +76,7 @@ public class Main
 			environnement.add(new Wall(environnement, new Rectangle(size.width-5,i,5,5)));
 		}
 		
+		/*
 		// Add some food.
 		for(int i=50; i<=70;i+=5)
 		{
@@ -57,6 +85,7 @@ public class Main
 				environnement.add(new Food(environnement, new Rectangle(i,j,5,5)));
 			}
 		}
+		*/
 		
 		// Launch the UI
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
@@ -81,7 +110,7 @@ public class Main
 	{
 		init(new Dimension(500,500));
 		
-		String brain = "forager.brain.DummyBrain";
+		String brain = "DummyBrain";
 		try
 		{
 			Class<?> cls = Class.forName(brain);

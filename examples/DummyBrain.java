@@ -1,6 +1,5 @@
-package forager.brain;
-
 import forager.agents.message.*;
+import forager.brain.Brain;
 import forager.model.FixedObject;
 import forager.util.Vector2D;
 

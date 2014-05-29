@@ -4,7 +4,8 @@
 	<!-- set global properties for this build -->
 	<property name="src" location="src"/>
 	<property name="lib" location="lib"/>
-	<property name="test" location="tests"/>
+	<property name="examples" location="examples"/>
+	<property name="examplesBuild" location="${examples}/build"/>
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
 	<property name="doc" location="doc"/>
@@ -16,6 +17,10 @@
 	<path id="classpath">
         <fileset dir="${lib}" includes="*.jar"/>
     </path>
+	<path id="classpathexample">
+        <fileset dir="${lib}" includes="*.jar"/>
+        <fileset dir="${dist}" includes="*.jar"/>
+    </path>
 
 	<target name="compile">
 		<mkdir dir="${build}" />
@@ -25,7 +30,8 @@
 		</copy>
 
 		<javac srcdir="${src}" destdir="${build}" debug="on"  classpathref="classpath">
-			<compilerarg value="-Xlint"/>
+		</javac>
+		<javac srcdir="${examples}" destdir="${examplesBuild}" debug="on"  classpathref="classpathexample">
 		</javac>
 	</target>
 
@@ -58,13 +64,14 @@
 
 	<target name="clean">
 		<delete dir="${build}" />
+		<delete dir="${examplesBuild}" />
 	</target>
 
 	<target name="run" depends="dist">
 <!--
 		<java fork="yes" classname="Main" classpath=".:${build}:${build}/madkit-5.jar:${build}:${build}/QuadTree.jar">
 -->
-		<java fork="yes" classname="forager.Main" classpath=".:${build}:${build}/madkit-5.jar:${build}">
+		<java fork="yes" classname="forager.Main" classpath=".:${build}:${build}/madkit-5.jar:${build}:${examplesBuild}">
 		</java>
 	</target>
 	
