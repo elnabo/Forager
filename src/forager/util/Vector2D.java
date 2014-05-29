@@ -75,6 +75,14 @@ public class Vector2D
 		y = v.y;
 	}
 	
+	/**
+	 * Create a new vector from its polar coordinate.
+	 * 
+	 * @param r  The vector norm.
+	 * @param theta  The vector angle.
+	 * 
+	 * @return The new vector.
+	 */
 	public static Vector2D fromPolar(double r, double theta)
 	{
 		double x = r * cos(theta);
@@ -189,6 +197,13 @@ public class Vector2D
 		return 2 * (atan(y/(sqrt(x * x + y * y) + x)));
 	}
 	
+	/**
+	 * Get a copy of this vector rotated.
+	 * 
+	 * @param theta  The angle of the rotation.
+	 * 
+	 * @return A rotated vector.
+	 */
 	public Vector2D rotate(double theta)
 	{
 		return fromPolar(norm(), (getOrientation() + theta)%(2 * PI));
@@ -204,12 +219,22 @@ public class Vector2D
 		return new Point2D.Double(x,y);
 	}
 	
+	/**
+	 * Display the Vector.
+	 * 
+	 * @return The string representation of the vector.
+	 */
 	public String toString()
 	{
-		return "x = " + x + ", y = " + y;
+		return "v(" + x + "," + y+")";
 	}
 	
 	@Override
+	/**
+	 * Test if 2 vectors are equals.
+	 * 
+	 * @return True if the two objects are equals vector, else false.
+	 */
 	public boolean equals(Object other)
 	{
 		if (other == null) { return false;}

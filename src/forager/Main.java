@@ -15,14 +15,29 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.SwingUtilities;
 
+/**
+ * Main class of the Forager game.
+ * 
+ * @author Guillaume Desquesnes.
+ */
 public class Main
 {
+	/** Madkit kernel. */
 	private static Madkit kernel = null;
+	
+	/** The environnement. */
 	private static Environnement environnement;
 	
+	/**
+	 * Initialize the game.
+	 * 
+	 * @param size  The size of the environnement.
+	 */
 	public static void init(Dimension size)
 	{
 		environnement = new Environnement(size);
+		
+		// Add obstacles
 		for(int i=0; i<= size.width; i+=5)
 		{
 			environnement.add(new Wall(environnement, new Rectangle(i,0,5,5)));
@@ -34,6 +49,7 @@ public class Main
 			environnement.add(new Wall(environnement, new Rectangle(size.width-5,i,5,5)));
 		}
 		
+		// Add some food.
 		for(int i=50; i<=70;i+=5)
 		{
 			for(int j=50; j<=70; j+=5)
@@ -42,10 +58,17 @@ public class Main
 			}
 		}
 		
+		// Launch the UI
 		EnvironnementUI envUI = new EnvironnementUI(environnement);
 		SwingUtilities.invokeLater(envUI);
 	}
 	
+	/**
+	 * Launch a new MaDKit agent.
+	 * 
+	 * @param pos  The agent's position.
+	 * @param brain  The agent's brain.
+	 */
 	public static void launchMadkitAgent(Point pos, Brain brain)
 	{
 		if (kernel == null)

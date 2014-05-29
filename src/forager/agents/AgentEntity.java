@@ -32,7 +32,7 @@ import java.util.List;
 public interface AgentEntity
 {
 	/** Item type for food/energy. */
-	String foodType = "food";
+	String foodType = "Food";
 	/** 
 	 * Cost in food/energy to produce a children.
 	 * The cost is shared between all genitor.
@@ -169,13 +169,13 @@ public interface AgentEntity
 	void give(AgentInfo ai, String item, int quantity);
 	
 	/**
-	 * Get an agent from its id.
+	 * Get an agent from its info.
 	 * 
-	 * @param id  The id
+	 * @param ai  The agent's info.
 	 * 
 	 * @return The agent if it exist in the environnement, else null.
 	 */
-	AgentEntity getAgent(int id);
+	AgentEntity getAgent(AgentInfo ai);
 	
 	/**
 	 * Get the list of objects who collide with the given hitbox.
@@ -284,7 +284,7 @@ public interface AgentEntity
 	 * Used to verify that the brain doesn't forge
 	 * fake message.
 	 * 
-	 * @param message  The message, not null.
+	 * @param message  The message.
 	 * 
 	 * @return True if the message has been recieved, else false.
 	 */

@@ -22,7 +22,7 @@ public class DummyBrain extends Brain
 				//~ sendMessage(createCopulationMessage(),getVisibleAgents().get(0));hadChild=true;}
 			if (hunger() > 0.5)
 				eat(10);
-			if (getQuantity("food") < 10)
+			if (getQuantity("Food") < 10)
 			{
 				broadcast(createFoodRequestMessage());
 			}
@@ -36,11 +36,13 @@ public class DummyBrain extends Brain
 		Vector2D mvment = new Vector2D(i,j);
 		if (mvment != moveBy(mvment))
 		{
-			harvest("food");
+			harvest("Food");
 		}
 		
 		if (hunger() > 0.5)
+		{
 			eat(10);
+		}
 	}
 	
 	public void handleMessage()
@@ -59,7 +61,7 @@ public class DummyBrain extends Brain
 					break;
 					
 				case "RequireFoodMessage":
-					give(mc.sender, "food",10);
+					give(mc.sender, "Food",10);
 					break;
 			}
 		}

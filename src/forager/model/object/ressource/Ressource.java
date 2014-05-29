@@ -9,37 +9,47 @@ import java.awt.Rectangle;
 
 public abstract class Ressource extends  Harvestable
 {
-	public Ressource(Environnement env, Point pos, Rectangle hitbox, int quantity)
+	/**
+	 * Create a new ressource from its hitbox.
+	 * 
+	 * @param env  The environnement where it belongs.
+	 * @param hitbox  The hitbox.
+	 * @param quantity  The initial quantity of ressource.
+	 */
+	public Ressource(Environnement env, Rectangle hitbox, int quantity)
 	{
-		super(env,pos,hitbox);
-		weight = quantity;
-	}
-
-	public Ressource(Environnement env, Rectangle bounds, int quantity)
-	{
-		super(env,bounds);
-		weight = quantity;
-	}
-	
-	public Ressource(Environnement env, Point pos, Rectangle hitbox)
-	{
-		super(env,pos,hitbox);
-		weight = 50;
+		super(env,hitbox,quantity);
 	}
 	
-	public Ressource(Environnement env, Rectangle bounds)
+	/**
+	 * Create a new ressource of capacity 50 from its hitbox.
+	 * 
+	 * @param env  The environnement where it belongs.
+	 * @param hitbox  The hitbox.
+	 */
+	public Ressource(Environnement env, Rectangle hitbox)
 	{
-		super(env,bounds);
-		weight = 50;
+		super(env,hitbox,50);
 	}
 	
 	@Override
-	public int harvest(AgentEntity ae) 
+	/** {@inheritdoc} */
+	public int harvest(AgentEntity ae, String type) 
 	{
-		int harvested = ae.add(type(),weight);
-		weight -= harvested;
-		if (weight == 0)
+		if (!hasType(type))
+			return 0;
+			
+		int harvested = ae.add(type(),quantity);
+		quantity -= harvested;
+		if (quantity == 0)
 			delete();
 		return harvested;
+	}
+	
+	@Override
+	/** {@inheritdoc} */
+	public boolean hasType(String type)
+	{
+		return type.equals(type());
 	}
 }

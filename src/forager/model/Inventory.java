@@ -1,8 +1,6 @@
 package forager.model;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -97,9 +95,9 @@ public class Inventory
 	 * @param item  The type of item, not null.
 	 * @param weight  The quantity to remove.
 	 * 
-	 * @return A pair containing the item type and the quantity removed.
+	 * @return The quantity removed.
 	 */
-	public Entry<String,Integer> remove(String item, int weight)
+	public int remove(String item, int weight)
 	{
 		if (storage.containsKey(item))
 		{
@@ -107,10 +105,10 @@ public class Inventory
 			int removed = Math.min(weight, contained);
 			storage.put(item, contained-removed);
 			freeCapacity += removed;
-			return new SimpleEntry<String,Integer>(item, removed);
+			return removed;
 		}
 		
-		return new SimpleEntry<String,Integer>(item, 0);
+		return 0;
 	}
 	
 	/**

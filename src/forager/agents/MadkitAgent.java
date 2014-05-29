@@ -15,17 +15,16 @@ import madkit.kernel.Agent;
 import madkit.kernel.Message;
 import madkit.message.ObjectMessage;
 
-
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.ArrayDeque;
 
 /**
  * MaDKit implementation of the {@link forager.agents.AgentEntity AgentEntity} for the Forager game.
@@ -71,10 +70,10 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	protected int maxHunger = 100;
 	
 	/** Id of the agent. */
-	private int id;
+	private final int id;
 	
 	/** The team of the agent*/
-	private String team;
+	private final String team;
 	
 	/** All message received since the last checkout. */
 	private ArrayDeque<MessageContent> messageBox = new ArrayDeque<MessageContent>();
@@ -189,15 +188,19 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public boolean copulate(AgentInfo other)
 	{
+		// You can't copulate with an other team.
 		if (!other.team.equals(team))
 			return false;
-		AgentEntity otherEntity = getAgent(other.id);
+			
+		AgentEntity otherEntity = getAgent(other);
+		// You can't copulate with someone who doesn't exist.
 		if (otherEntity == null)
 			return false;
 			
 		Inventory otherInventory = otherEntity.inventory();
 		int halfChildCost = childCost / 2;
 		
+		// You can't copulate with some who doesn't have enough food.
 		if (inventory.getCapacity(foodType) < halfChildCost &&
 			otherInventory.getCapacity(foodType) < halfChildCost)
 			return false;
@@ -258,19 +261,16 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public void eat(int quantity)
 	{
-		hunger = Math.max(0,hunger - inventory.remove(foodType,quantity).getValue());
+		hunger = Math.max(0,hunger - inventory.remove(foodType,quantity));
 	}
 	
 	@Override
 	/** {@inheritDoc} */
-	public AgentEntity getAgent(int id)
+	public AgentEntity getAgent(AgentInfo ai)
 	{
-		for (AgentEntity ae : environnement.agents)
-		{
-			if (ae.id() == id)
-				return ae;
-		}
-		return null;
+		if (ai == null)
+			return null;
+		return ai.agent;
 	}
 
 	@Override
@@ -312,6 +312,8 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		Rectangle visionBox = new Rectangle(hitbox.x - visionRange,
 			hitbox.y - visionRange,	hitbox.width + 2 * visionRange,
 			hitbox.height + 2 * visionRange);
+			
+		// Test if an agent is within the vision range.
 		for (AgentEntity a : environnement.agents)
 		{
 			if (collide(a, visionBox) && a!=this)
@@ -333,8 +335,11 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public void give(AgentInfo ai, String item, int quantity)
 	{
-		sendMessage(new RessourceMessage(
-					item, inventory.remove(item,quantity).getValue(), info()),
+		if (getAgent(ai) == this)
+			return;
+			
+		sendMessage(new RessourceMessage(info(),
+					item, inventory.remove(item,quantity)),
 					ai);
 	}
 	
@@ -351,6 +356,11 @@ public final class MadkitAgent extends Agent implements AgentEntity
 				if (o instanceof MessageContent)
 				{
 					messageBox.add((MessageContent)(o));
+					/*
+					 * If the message is ressource, add them
+					 * to the stock. Send back the remaining
+					 * ressources.
+					 */
 					if (o instanceof RessourceMessage)
 					{
 						RessourceMessage rm = (RessourceMessage)o;
@@ -371,9 +381,9 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		List<FixedObject> possibleCollisions = environnement.collide(new Rectangle(hitbox.x-1, hitbox.y-1, hitbox.width+2, hitbox.height+2));
 		for (FixedObject i : possibleCollisions)
 		{
-			if (i.harvestable() && i.type().equals(type))
+			if (i.harvestable())
 			{
-				harvested += ((Harvestable)i).harvest(this);
+				harvested += ((Harvestable)i).harvest(this,type);
 			}
 		}
 		return harvested;
@@ -420,7 +430,7 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public AgentInfo info()
 	{
-		return new AgentInfo(hitbox, team(), id);
+		return new AgentInfo(this);
 	}
 	
 	@Override
@@ -434,6 +444,8 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public boolean isMessage(MessageContent message)
 	{
+		if (message == null)
+			return false;
 		return messageVerification.contains(message);
 	}
 	
@@ -462,6 +474,10 @@ public final class MadkitAgent extends Agent implements AgentEntity
 			return new Vector2D(0,0);
 			
 		double i =0.1;
+		/*
+		 * Test if the agent will collide with 
+		 * something during the movement.
+		 */
 		do
 		{
 			List<FixedObject> collision = getCollisionAfterMovement(mvment.scalarMul(i));
@@ -471,8 +487,11 @@ public final class MadkitAgent extends Agent implements AgentEntity
 			}
 			i+=0.1;
 		} while (i<=1.0);
+		
+		// Get the new movement vector.
 		direction =  mvment.scalarMul(i-0.1);
 		
+		// Apply the movement.
 		hitbox.x += (int)Math.round(direction.x);
 		hitbox.y += (int)Math.round(direction.y);
 		return new Vector2D(direction);
@@ -489,7 +508,10 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	/** {@inheritDoc} */
 	public void sendMessage(MessageContent message, AgentInfo ai)
 	{
-		AgentEntity other = getAgent(ai.id);
+		AgentEntity other = getAgent(ai);
+		if (other == this)
+			return;
+		
 		if (other instanceof MadkitAgent)
 			sendMessage(defaultCommunity,defaultGroup, ai.id+"",
 				new ObjectMessage<MessageContent>(message));

@@ -15,21 +15,38 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+/**
+ * The Forager game user interface.
+ * 
+ * @author Guillaume Desquesnes
+ */
 public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	
+	/** The environnement to display. */
 	protected Environnement environnement;
+	
+	/** The size of the panel. */
 	protected Dimension size = new Dimension(500,500);
 	
+	/** A timer to trigger repaint. */
     private final Timer timer = new Timer(20, this);
 	
+	/**
+	 * Create a new ui for one environnement.
+	 * 
+	 * @param env  The environnement.
+	 */
 	public EnvironnementUI(Environnement env)
 	{
 		super(true);
 		environnement = env;
 	}
 	
+	/**
+	 * Called once to create a new windows.
+	 */
 	@Override
 	public void run()
 	{
@@ -46,15 +63,24 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 		timer.start();
 	}
 	
+	/**
+	 * Draw everything on the panel.
+	 * 
+	 * @param graphic  The graphic.
+	 */
 	@Override
     protected void paintComponent(Graphics graphic)
 	{
 		super.paintComponent(graphic);
+		// Clean 
 		graphic.setColor(Color.WHITE);
 		graphic.fillRect(0,0,size.width,size.height);
 		
+		// Scale the items to draw to fit the screen.
 		float scaleX = ((float)size.width) / environnement.size.width,
 				scaleY = ((float)size.height) / environnement.size.height;
+				
+		// Draw all objects.
 		for (final FixedObject obj : new ArrayList<FixedObject>(environnement.entities))
 		{
 			if (obj == null)
@@ -66,10 +92,10 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 				ey = Math.round((rect.y + rect.height) * scaleY);
 			switch (obj.type())
 			{
-				case "food":
+				case "Food":
 					graphic.setColor(Color.GREEN);
 					break;
-				case "breakble":
+				case "Breakable":
 					graphic.setColor(Color.LIGHT_GRAY);
 					break;
 				default:
@@ -77,6 +103,8 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 			}
 			graphic.fillPolygon(new int[]{sx,ex,ex,sx},new int[]{sy,sy,ey,ey},4);
 		}
+		
+		// Draw all agents.
 		for(final AgentEntity ae : new ArrayList<AgentEntity>(environnement.agents))
 		{
 			graphic.setColor(ae.color());
@@ -89,6 +117,11 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 		}
 	}
 	
+    /**
+     * Trigger repainting on trigger.
+     * 
+     * @param e  The action triggering.
+     */
     @Override
     public void actionPerformed(ActionEvent e)
     {

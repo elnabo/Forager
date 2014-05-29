@@ -6,21 +6,32 @@ import forager.model.FixedObject;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+/**
+ * A basic undestructible obstacle.
+ * 
+ * @author Guillaume Desquesnes
+ */
 public class Wall extends FixedObject
 {
-	public Wall(Environnement env, Point pos, Rectangle hitbox)
+	/**
+	 * Create a new 5x5 wall at the given position.
+	 * 
+	 * @param env  The environnement where it belongs.
+	 * @param pos  The position.
+	 */
+	public Wall(Environnement env, Point pos)
 	{
-		super(env,pos,hitbox);
+		super(env,new Rectangle(pos.x, pos.y, 5,5));
 	}
 	
-	public Wall(Environnement env, Rectangle bounds)
+	/**
+	 * Create a new wall.
+	 * 
+	 * @param env  The environnement where it belongs.
+	 * @param hitbox  The hitbox of the wall.
+	 */
+	public Wall(Environnement env, Rectangle hitbox)
 	{
-		super(env,bounds);
-	}
-	
-	@Override
-	public String type()
-	{
-		return "wall";
+		super(env,hitbox);
 	}
 }
