@@ -143,7 +143,7 @@ public interface AgentEntity
 	/**
 	 * Return the current direction/orientation vector of the agent.
 	 * 
-	 * @return The current direction/orientation vector of the agent.
+	 * @return The current direction/orientation vector of the agent,not null.
 	 */
 	Vector2D direction();
 	

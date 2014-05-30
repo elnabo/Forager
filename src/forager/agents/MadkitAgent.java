@@ -54,7 +54,7 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	protected final Color col = Color.BLUE;
 	
 	/** Last movement vector applied. */
-	protected Vector2D direction;
+	protected Vector2D direction = new Vector2D(0,0);
 	
 	/** Agent's inventory. */
 	protected Inventory inventory;
@@ -63,7 +63,7 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	protected Rectangle hitbox;	
 	
 	/** Maximum vision distance. */
-	protected int visionRange = 50;
+	protected int visionRange = 250;
 	
 	/** Current hunger. */
 	protected int hunger = 0;
@@ -134,6 +134,8 @@ public final class MadkitAgent extends Agent implements AgentEntity
 	@Override
 	protected void activate()
 	{
+		createGroup(defaultCommunity,defaultGroup);
+		createGroup(defaultCommunity,team);
 		requestRole(defaultCommunity, defaultGroup, defaultRole);
 		requestRole(defaultCommunity, defaultGroup, id + "");
 		requestRole(defaultCommunity, team, id + "");
@@ -489,9 +491,12 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		if (mvment.norm() > 1)
 			mvment = mvment.unitVector();
 		if (mvment.norm() <= 0.001)
+		{
+			direction = new Vector2D(0,0);
 			return new Vector2D(0,0);
+		}
 			
-		double i =0.1;
+		double i =0.0;
 		/*
 		 * Test if the agent will collide with 
 		 * something during the movement.
@@ -529,7 +534,7 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		AgentEntity other = getAgent(ai);
 		if (other == this)
 			return;
-		
+			
 		if (other instanceof MadkitAgent)
 			sendMessage(defaultCommunity,defaultGroup, ai.id+"",
 				new ObjectMessage<MessageContent>(message));

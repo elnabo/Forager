@@ -11,13 +11,17 @@ import java.util.Set;
 public class DummyBrain extends Brain
 {
 	
-	java.util.Random a = new java.util.Random(50);
-	java.util.Random b = new java.util.Random(846532);
+	java.util.Random a = new java.util.Random();
+	java.util.Random b = new java.util.Random();
+	boolean moved = true;
+	boolean wantChild = false;
+	boolean replyChild = false;
 	
 	@Override
 	public void update()
 	{
-		//~ eat(1);
+		super.update();
+		
 		handleMessage();/*
 		if (hitbox().x == 10){
 			//~ if (!hadChild){
@@ -31,18 +35,16 @@ public class DummyBrain extends Brain
 			return;}
 		*/
 		FixedObject nearest = getNearestRessource();
-		if (nearest == null)
-		{				
-			int i = Math.round(a.nextFloat()),
-				j = Math.round(b.nextFloat());
-				
-			moveBy(new Vector2D(i,j));
+		if (nearest == null || !moved)
+		{		
+			randomMove();		
+			moved = true;
 		}
 		else
 		{
-			//~ System.out.println(nearest.harvestable()+ " " + nearest.type());
-			//~ System.out.println(hunger() + " " +getQuantity("Food"));
-			moveBy(goTo(nearest));
+			Vector2D dir = goTo(nearest);
+			Vector2D t = moveBy(dir);
+			moved = (dir == t);
 		}
 		
 		Set<String> harvestable = harvestable();
@@ -55,6 +57,19 @@ public class DummyBrain extends Brain
 		{
 			eat(10);
 		}
+		
+		int foodQuantity = getQuantity("Food");
+		if (foodQuantity < 10)
+		{
+			broadcast(createFoodRequestMessage());
+		}
+		else if (foodQuantity > 80)
+		{
+			wantChild = true;
+			broadcast(createCopulationMessage());
+		}
+		
+		
 	}
 	
 	public FixedObject getNearestRessource()
@@ -81,7 +96,7 @@ public class DummyBrain extends Brain
 		Rectangle aim = obj.hitbox();
 		Point2D.Double m = new Point2D.Double(me.x + me.width/2, me.y + me.height/2);
 		Point2D.Double a = new Point2D.Double(aim.x + aim.width/2, aim.y + aim.height/2);
-		return new Vector2D(m,a);
+		return new Vector2D(m,a).unitVector();
 	}
 	
 	public void handleMessage()
@@ -96,13 +111,21 @@ public class DummyBrain extends Brain
 					break;
 					
 				case "CopulationOffer":
-					replyTo(mc,true);
+					replyTo(mc,(getQuantity("Food") > 75));
 					break;
 					
 				case "RequireFoodMessage":
-					give(mc.sender, "Food",10);
+					if (getQuantity("Food") > 20)
+						give(mc.sender, "Food",10);
 					break;
 			}
 		}
+	}
+	
+	public void randomMove()
+	{
+		double theta = 2*Math.PI*a.nextDouble();
+				
+		moveBy(Vector2D.fromPolar(1,theta));
 	}
 }

@@ -29,6 +29,9 @@ import java.util.Set;
  */
 public abstract class Brain
 {
+	/** Weither the agent has moved during the update. */
+	private boolean hasMoved = false;
+	
 	/** Entity controled by this brain. */
 	private AgentEntity parent;
 	
@@ -303,6 +306,16 @@ public abstract class Brain
 	}
 	
 	/**
+	 * Get the id of the agent.
+	 * 
+	 * @return The agent's id.
+	 */
+	public final int id()
+	{
+		return parent.id();
+	}
+	
+	/**
 	 * Test if the agent is a teammate.
 	 * 
 	 * @param ai  Info on the agent.
@@ -327,6 +340,10 @@ public abstract class Brain
 	 */
 	public final Vector2D moveBy(Vector2D direction)
 	{
+		if (hasMoved)
+			return new Vector2D(0,0);
+			
+		hasMoved = true;
 		return parent.moveBy(direction);
 	}
 	
@@ -362,6 +379,9 @@ public abstract class Brain
 	 * 
 	 * Has to be overriden by subclasses.
 	 */
-	public abstract void update();
+	public void update()
+	{
+		hasMoved = false;
+	}
 
 }
