@@ -44,7 +44,7 @@ public class Main
 				if (i<8 && j<8)
 					continue;
 				double noise = SimplexNoise.noise(i,j);
-				if (noise < -0.7)
+				if (noise < -0.8)
 					environnement.add(new Wall(environnement, new Rectangle(i*5,j*5,5,5)));
 				else if (noise > 0.8)
 					environnement.add(new Food(environnement, new Rectangle(i*5,j*5,5,5)));
@@ -75,17 +75,6 @@ public class Main
 			environnement.add(new Wall(environnement, new Rectangle(0,i,5	,5)));
 			environnement.add(new Wall(environnement, new Rectangle(size.width-5,i,5,5)));
 		}
-		
-		/*
-		// Add some food.
-		for(int i=50; i<=70;i+=5)
-		{
-			for(int j=50; j<=70; j+=5)
-			{
-				environnement.add(new Food(environnement, new Rectangle(i,j,5,5)));
-			}
-		}
-		*/
 		
 		// Launch the UI
 		EnvironnementUI envUI = new EnvironnementUI(environnement);

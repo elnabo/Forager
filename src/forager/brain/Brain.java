@@ -13,6 +13,7 @@ import forager.util.Vector2D;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Brain of a Forager Game agent.
@@ -269,6 +270,16 @@ public abstract class Brain
 	public final int harvest(String item)
 	{
 		return parent.harvest(item);
+	}
+	
+	/**
+	 * Get the list of harvestable ressource.
+	 * 
+	 * @return A set of all the harvestable ressource.
+	 */
+	public final Set<String> harvestable()
+	{
+		return parent.harvestable();
 	}
 	
 	/**

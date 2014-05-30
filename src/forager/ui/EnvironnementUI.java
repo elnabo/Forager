@@ -31,7 +31,7 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 	protected Dimension size = new Dimension(500,500);
 	
 	/** A timer to trigger repaint. */
-    private final Timer timer = new Timer(20, this);
+    private final Timer timer = new Timer(5, this);
 	
 	/**
 	 * Create a new ui for one environnement.
@@ -109,10 +109,10 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 		{
 			graphic.setColor(ae.color());
 			Rectangle hitbox = ae.hitbox();
-			int sx = hitbox.x,
-				ex = hitbox.x + hitbox.width,
-				sy = hitbox.y,
-				ey = hitbox.y + hitbox.height;
+			int sx = Math.round(hitbox.x*scaleX),
+				ex = Math.round((hitbox.x + hitbox.width)*scaleX),
+				sy = Math.round(hitbox.y*scaleY),
+				ey = Math.round((hitbox.y + hitbox.height)*scaleY);
 			graphic.fillPolygon(new int[]{sx,ex,ex,sx}, new int[]{sy,sy,ey,ey},4);
 		}
 	}

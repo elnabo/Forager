@@ -23,8 +23,10 @@ import java.awt.Rectangle;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * MaDKit implementation of the {@link forager.agents.AgentEntity AgentEntity} for the Forager game.
@@ -381,12 +383,28 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		List<FixedObject> possibleCollisions = environnement.collide(new Rectangle(hitbox.x-1, hitbox.y-1, hitbox.width+2, hitbox.height+2));
 		for (FixedObject i : possibleCollisions)
 		{
-			if (i.harvestable())
+			if (i.harvestable() && i.type().equals(type))
 			{
 				harvested += ((Harvestable)i).harvest(this,type);
 			}
 		}
 		return harvested;
+	}
+	
+	@Override
+	/** {@inheritDoc} */
+	public final Set<String> harvestable() 
+	{
+		HashSet<String> types = new HashSet<String>();
+		List<FixedObject> possibleCollisions = environnement.collide(new Rectangle(hitbox.x-1, hitbox.y-1, hitbox.width+2, hitbox.height+2));
+		for (FixedObject i : possibleCollisions)
+		{
+			if (i.harvestable())
+			{
+				types.add(i.type());
+			}
+		}
+		return types;
 	}
 	
 	@Override

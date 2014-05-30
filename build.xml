@@ -24,6 +24,7 @@
 
 	<target name="compile">
 		<mkdir dir="${build}" />
+		<mkdir dir="${examplesBuild}" />
 
 		<copy todir="${build}">
 			<fileset dir="${lib}"/>
@@ -38,7 +39,8 @@
 	<target name="doc">
 		<mkdir dir="${doc}" />
 		<javadoc sourcePath="${src}"  classpathref="classpath" destdir="${doc}"
-					encoding="utf-8" charset="utf-8" docencoding="utf-8">
+					encoding="utf-8" charset="utf-8" docencoding="utf-8"
+					Windowtitle="Forager">
 			<link href="http://docs.oracle.com/javase/7/docs/api/"/>
 			<link href="http://www.madkit.net/docs/api/"/>
 <!--		

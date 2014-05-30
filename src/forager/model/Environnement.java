@@ -93,7 +93,7 @@ public class Environnement
 	 * 
 	 * @param obj  The object.
 	 */
-	public void add(FixedObject obj)
+	synchronized public void add(FixedObject obj)
 	{
 		grid.add(obj);
 		entities.add(obj);
@@ -104,7 +104,7 @@ public class Environnement
 	 * 
 	 * @param agent  The agent.
 	 */
-	public void add(AgentEntity agent)
+	synchronized public void add(AgentEntity agent)
 	{
 		agents.add(agent);
 	}
@@ -114,7 +114,7 @@ public class Environnement
 	 * 
 	 * @param objs  A list of objects.
 	 */
-	public void addAll(List<FixedObject> objs)
+	synchronized public void addAll(List<FixedObject> objs)
 	{
 		grid.addAll(objs);
 		entities.addAll(objs);
@@ -127,7 +127,7 @@ public class Environnement
 	 * 
 	 * @return The list of object.
 	 */
-	public List<FixedObject> collide(Rectangle hitbox)
+	synchronized public List<FixedObject> collide(Rectangle hitbox)
 	{
 		List<FixedObject> trueCollision = new ArrayList<FixedObject>();
 		List<FixedObject> possible = grid.getPossibleCollisions(hitbox);
@@ -191,7 +191,7 @@ public class Environnement
 	 * 
 	 * @return  True if the object has been removed, else false.
 	 */
-	public boolean remove(FixedObject obj)
+	synchronized public boolean remove(FixedObject obj)
 	{
 		return entities.remove(obj) && grid.remove(obj);
 	}
@@ -203,7 +203,7 @@ public class Environnement
 	 * 
 	 * @return  True if the agent has been removed, else false.
 	 */
-	 public boolean remove(AgentEntity agent)
+	synchronized public boolean remove(AgentEntity agent)
 	{
 		return agents.remove(agent);
 	}

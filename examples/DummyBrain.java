@@ -3,7 +3,10 @@ import forager.brain.Brain;
 import forager.model.FixedObject;
 import forager.util.Vector2D;
 
+import java.awt.geom.Point2D;
+import java.awt.Rectangle;
 import java.util.List;
+import java.util.Set;
 
 public class DummyBrain extends Brain
 {
@@ -15,7 +18,7 @@ public class DummyBrain extends Brain
 	public void update()
 	{
 		//~ eat(1);
-		handleMessage();
+		handleMessage();/*
 		if (hitbox().x == 10){
 			//~ if (!hadChild){
 				//~ sendMessage(createCopulationMessage(),getVisibleAgents().get(0));hadChild=true;}
@@ -26,14 +29,24 @@ public class DummyBrain extends Brain
 				broadcast(createFoodRequestMessage());
 			}
 			return;}
-			
-		int i = Math.round(a.nextFloat()),
-			j = Math.round(b.nextFloat());
-			
-		i = 1;j=1;
-			
-		Vector2D mvment = new Vector2D(i,j);
-		if (mvment != moveBy(mvment))
+		*/
+		FixedObject nearest = getNearestRessource();
+		if (nearest == null)
+		{				
+			int i = Math.round(a.nextFloat()),
+				j = Math.round(b.nextFloat());
+				
+			moveBy(new Vector2D(i,j));
+		}
+		else
+		{
+			//~ System.out.println(nearest.harvestable()+ " " + nearest.type());
+			//~ System.out.println(hunger() + " " +getQuantity("Food"));
+			moveBy(goTo(nearest));
+		}
+		
+		Set<String> harvestable = harvestable();
+		if (harvestable.contains("Food"))
 		{
 			harvest("Food");
 		}
@@ -42,6 +55,33 @@ public class DummyBrain extends Brain
 		{
 			eat(10);
 		}
+	}
+	
+	public FixedObject getNearestRessource()
+	{
+		List<FixedObject> visible = getVisibleObjects();
+		Rectangle hitbox = hitbox();
+		double minDistance = Double.MAX_VALUE;
+		FixedObject nearest = null;
+		for (FixedObject obj : visible)
+		{
+			double dist = distance(obj.hitbox(), hitbox);
+			if (dist < minDistance && obj.harvestable())
+			{
+				minDistance = dist;
+				nearest = obj;
+			}
+		}
+		return nearest;
+	}
+	
+	public Vector2D goTo(FixedObject obj)
+	{
+		Rectangle me = hitbox();
+		Rectangle aim = obj.hitbox();
+		Point2D.Double m = new Point2D.Double(me.x + me.width/2, me.y + me.height/2);
+		Point2D.Double a = new Point2D.Double(aim.x + aim.width/2, aim.y + aim.height/2);
+		return new Vector2D(m,a);
 	}
 	
 	public void handleMessage()

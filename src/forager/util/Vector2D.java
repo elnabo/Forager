@@ -49,8 +49,8 @@ public class Vector2D
 	 */
 	public Vector2D(Point2D.Double start, Point2D.Double end)
 	{		
-		x = start.x - end.x;
-		y = start.y - end.y;
+		x = end.x - start.x;
+		y = end.y - start.y;
 	}
 	
 	/**

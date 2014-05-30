@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -236,6 +237,13 @@ public interface AgentEntity
 	 * @return The quantity of ressource harvested.
 	 */
 	int harvest(String type);
+	
+	/**
+	 * Get the list of type who can be harvested.
+	 * 
+	 * @return A set of all the harvestable type.
+	 */
+	Set<String> harvestable();
 	
 	/**
 	 * Test if a message has been recieved.
