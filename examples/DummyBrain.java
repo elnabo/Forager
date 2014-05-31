@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.Stack;
+
 public class DummyBrain extends Brain
 {
 	
@@ -20,6 +22,8 @@ public class DummyBrain extends Brain
 	boolean moved = true;
 	boolean wantChild = false;
 	boolean replyChild = false;
+	
+	Stack<Vector2D> movements;
 	
 	@Override
 	public void update()
@@ -46,9 +50,20 @@ public class DummyBrain extends Brain
 		}
 		else
 		{
-			Vector2D dir = new AStar(hitbox(),getVisibleObjects(),visionRange()).solve();
-			Vector2D t = moveBy(dir);
-			moved = (dir == t);
+			if (movements == null || movements.empty()) 
+				movements = new AStar(hitbox(),getVisibleObjects(),visionRange()).solve();
+				
+			if (movements == null || movements.empty())
+			{
+				randomMove();		
+				moved = true;
+			}
+			else
+			{
+				Vector2D dir = movements.pop();
+				Vector2D t = moveBy(dir);
+				moved = (dir == t);
+			}
 		}
 		
 		Set<String> harvestable = harvestable();
@@ -73,8 +88,7 @@ public class DummyBrain extends Brain
 			wantChild = true;
 			broadcast(createCopulationMessage());
 		}
-		
-		
+	
 	}
 	
 	public FixedObject getNearestRessource()

@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class AStar implements Comparator<Rectangle>
 {
@@ -42,10 +43,10 @@ public class AStar implements Comparator<Rectangle>
 		for (FixedObject obj : fo)
 		{
 			Rectangle box = obj.hitbox();
-			if (r.x + r.width +1 > box.x-1 &&
-				r.y + r.height +1 > box.y-1 &&
-				r.x-1 < box.x + box.width +1&&
-				r.y -1< box.y + box.height+1)
+			if (r.x + r.width > box.x &&
+				r.y + r.height > box.y &&
+				r.x < box.x + box.width &&
+				r.y < box.y + box.height)
 				return true;
 		}
 		return false;
@@ -90,12 +91,24 @@ public class AStar implements Comparator<Rectangle>
 		
 	}
 	
-	public Vector2D getDirection(Rectangle curr, Rectangle prev)
+	public Stack<Vector2D> getDirection(Rectangle curr, Rectangle prev)
 	{
+		Stack<Vector2D> res = new Stack<Vector2D>();
+		
+		while (came_from.containsKey(curr))
+		{
+			Rectangle from = came_from.get(curr);
+			res.push(new Vector2D(curr.x - from.x, curr.y - from.y));
+			curr = from;
+		}
+		
+		return res;
+		/*
 		if (came_from.containsKey(curr))
 			return getDirection(came_from.get(curr),curr);
 		
 		return new Vector2D(prev.x - curr.x, prev.y - curr.y);
+		*/
 	}
 	
 	public List<Rectangle> getNeighbors(Rectangle current)
@@ -119,7 +132,7 @@ public class AStar implements Comparator<Rectangle>
 		return res;
 	}
 		
-	public Vector2D solve()
+	public Stack<Vector2D> solve()
 	{
 		while (!openSet.isEmpty())
 		{
@@ -148,7 +161,6 @@ public class AStar implements Comparator<Rectangle>
 				}
 			}
 		}
-		System.out.println("failure");
-		return new Vector2D(0,0);
+		return null;
 	}
 }

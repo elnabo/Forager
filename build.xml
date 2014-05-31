@@ -7,7 +7,6 @@
 	<property name="examples" location="examples"/>
 	<property name="examplesBuild" location="${examples}/build"/>
 	<property name="build" location="build"/>
-	<property name="dist" location="dist"/>
 	<property name="doc" location="doc"/>
 
 	<presetdef name="javac">
@@ -16,10 +15,6 @@
 	
 	<path id="classpath">
         <fileset dir="${lib}" includes="*.jar"/>
-    </path>
-	<path id="classpathexample">
-        <fileset dir="${lib}" includes="*.jar"/>
-        <fileset dir="${dist}" includes="*.jar"/>
     </path>
 
 	<target name="compile">
@@ -32,7 +27,7 @@
 
 		<javac srcdir="${src}" destdir="${build}" debug="on"  classpathref="classpath">
 		</javac>
-		<javac srcdir="${examples}" destdir="${examplesBuild}" debug="on"  classpathref="classpathexample">
+		<javac srcdir="${examples}" destdir="${examplesBuild}" debug="on"  classpath="${lib}/*.jar:${build}">
 		</javac>
 	</target>
 
@@ -43,37 +38,18 @@
 					Windowtitle="Forager">
 			<link href="http://docs.oracle.com/javase/7/docs/api/"/>
 			<link href="http://www.madkit.net/docs/api/"/>
-<!--		
-			<classpath>
-				<fileset dir="${lib}" includes="*.jar"/>
-			</classpath>
--->
 		</javadoc>
 		
 	</target>
-	
-	<target name="dist" depends="compile">
-		<mkdir dir="${dist}" />
-
-		<jar basedir="${build}" destfile="${dist}/forager.jar">
-			<manifest>
-				<attribute name="Main-Class" value="forager.Main"/>
-			</manifest>
-			<zipgroupfileset dir="${build}" includes="*.jar" />
-		</jar>
-	</target>
-
 
 	<target name="clean">
 		<delete dir="${build}" />
 		<delete dir="${examplesBuild}" />
 	</target>
 
-	<target name="run" depends="dist">
-<!--
-		<java fork="yes" classname="Main" classpath=".:${build}:${build}/madkit-5.jar:${build}:${build}/QuadTree.jar">
--->
-		<java fork="yes" classname="forager.Main" classpath=".:${build}:${build}/madkit-5.jar:${build}:${examplesBuild}">
+	<target name="run" depends="compile">
+		<java fork="yes" classname="forager.Main" classpath=".:${build}:${build}/madkit-5.jar:${examplesBuild}">
+			<arg value="DummyBrain"/>
 		</java>
 	</target>
 	
