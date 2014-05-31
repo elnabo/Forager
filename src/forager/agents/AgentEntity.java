@@ -346,4 +346,11 @@ public interface AgentEntity
 	 * {@link forager.brain.Brain#update()}
 	 */
 	void update();
+	
+	/**
+	 * Get the vision range of the agent.
+	 * 
+	 * @return The vision range.
+	 */
+	int visionRange();
 }

@@ -91,34 +91,42 @@ public class Main
 	{
 		if (kernel == null)
 			kernel = new Madkit("--noAgentConsoleLog true --madkitLogLevel OFF --desktopFrameClass null");
-		
 		kernel.doAction(KernelAction.LAUNCH_AGENT, new MadkitAgent(environnement,pos, brain));
 	}
 	
 	public static void main(String[] args)
 	{
+		if (args.length < 1)
+		{
+			System.err.println("Missing brain class name");
+			System.exit(-1);
+		}		
+		
 		init(new Dimension(500,500));
 		
-		String brain = "DummyBrain";
+		String name = args[0];
 		try
 		{
-			Class<?> cls = Class.forName(brain);
+			Class<?> cls = Class.forName(name);
+
 			launchMadkitAgent(new Point(20,20), (Brain)(cls.newInstance()));
 			launchMadkitAgent(new Point(7,7), (Brain)(cls.newInstance()));
 		}
 		catch (InstantiationException e)
 		{
-			System.err.println(brain + " is not a brain");
+			System.err.println(name + " is not a brain");
 			System.exit(-1);
 		}
 		catch (IllegalAccessException e)
 		{
-			System.err.println(brain + " is not accessible");
+			System.err.println(name + " is not accessible");
 			System.exit(-1);
 		}
 		catch (LinkageError | ClassNotFoundException e)
 		{
-			System.err.println(brain + " not instanciable");
+			System.err.println(name + " not found");
+			System.err.println(e.toString());
+			e.printStackTrace();
 			System.exit(-1);
 		}
 	}

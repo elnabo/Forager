@@ -155,7 +155,7 @@ public abstract class Brain
 	 * 
 	 * @return The distance between the two hitbox.
 	 */
-	public final double distance(Rectangle a, Rectangle b)
+	public static final double distance(Rectangle a, Rectangle b)
 	{
 		int x1 = a.x + a.width/2,
 			y1 = a.y + a.height/2,
@@ -383,5 +383,15 @@ public abstract class Brain
 	{
 		hasMoved = false;
 	}
+	
+	/**
+	 * Get the vision range of the agent.
+	 * 
+	 * @return The vision range.
+	 */
+	 public int visionRange()
+	 {
+		 return parent.visionRange();
+	 }
 
 }

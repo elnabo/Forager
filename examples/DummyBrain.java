@@ -5,9 +5,13 @@ import forager.util.Vector2D;
 
 import java.awt.geom.Point2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
-
 public class DummyBrain extends Brain
 {
 	
@@ -42,7 +46,7 @@ public class DummyBrain extends Brain
 		}
 		else
 		{
-			Vector2D dir = goTo(nearest);
+			Vector2D dir = new AStar(hitbox(),getVisibleObjects(),visionRange()).solve();
 			Vector2D t = moveBy(dir);
 			moved = (dir == t);
 		}
@@ -51,6 +55,7 @@ public class DummyBrain extends Brain
 		if (harvestable.contains("Food"))
 		{
 			harvest("Food");
+			broadcast(createLocationMessage(hitbox(),"Foood"));
 		}
 		
 		if (hunger() > 0.5)
@@ -105,6 +110,9 @@ public class DummyBrain extends Brain
 		{
 			switch (mc.type())
 			{
+				case "LocationMessage":
+					break;
+				
 				case "rCopulationOffer":
 					if (((Reply)mc).value)
 						copulate(mc);
@@ -128,4 +136,5 @@ public class DummyBrain extends Brain
 				
 		moveBy(Vector2D.fromPolar(1,theta));
 	}
+	
 }

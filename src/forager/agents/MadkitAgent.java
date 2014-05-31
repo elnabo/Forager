@@ -561,5 +561,10 @@ public final class MadkitAgent extends Agent implements AgentEntity
 		brain.update();
 		increaseHunger();
 	}
-	
+	@Override
+	/** {@inheritDoc} */
+	public int visionRange()
+	{
+		return visionRange;
+	}
 }
