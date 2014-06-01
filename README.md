@@ -13,5 +13,5 @@ An [example](https://github.com/elnabo/Forager/blob/master/examples/DummyBrain.j
 * Compilation : ant compile
 * Example execution : ant run
 * Your brain execution 
-    ** Windows : java -cp ".;build;build/madkit-5.jar;pathToYourBrain" forager.Main YourBrainClassName
-    ** Linux : java -cp ".:build:build/madkit-5.jar:pathToYourBrain" forager.Main YourBrainClassName
+    * Windows : java -cp ".;build;build/madkit-5.jar;pathToYourBrain" forager.Main YourBrainClassName
+    * Linux : java -cp ".:build:build/madkit-5.jar:pathToYourBrain" forager.Main YourBrainClassName
