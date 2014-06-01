@@ -81,6 +81,17 @@ public class Main
 		SwingUtilities.invokeLater(envUI);
 	}
 	
+	public static void exit()
+	{
+		int harvested = environnement.getHarvestedQuantity();
+		double duration = environnement.duration() /1000.0;
+		
+		double score = (harvested * harvested) / duration;
+		System.out.println("Harvested : " + harvested + " in " + duration + " seconds => Score :" + score);
+		
+		System.exit(0);
+	}
+	
 	/**
 	 * Launch a new MaDKit agent.
 	 * 

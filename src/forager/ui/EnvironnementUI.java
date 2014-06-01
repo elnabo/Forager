@@ -1,5 +1,6 @@
 package forager.ui;
 
+import forager.Main;
 import forager.agents.AgentEntity;
 import forager.model.Environnement;
 import forager.model.FixedObject;
@@ -7,6 +8,8 @@ import forager.model.FixedObject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -58,6 +61,15 @@ public class EnvironnementUI extends JPanel implements Runnable, ActionListener
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		frame.addWindowListener(new WindowAdapter() 
+			{
+				@Override
+				public void windowClosing(WindowEvent windowEvent) 
+				{
+					Main.exit();
+				}
+			});
 		
 		size = getSize();
 		timer.start();

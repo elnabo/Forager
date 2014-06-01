@@ -36,6 +36,11 @@ public class Environnement
 	/** List of all agents in the environnement. */
 	public List<AgentEntity> agents = new ArrayList<AgentEntity>();
 	
+	protected int ressourceQuantity = 0;
+	protected int harvestedQuantity = 0;
+	protected final long timeStamp = System.currentTimeMillis();
+	protected long duration = 0;
+	
 	/**
 	 * Create a new environnement of a given size.
 	 * 
@@ -74,27 +79,15 @@ public class Environnement
 	}
 	
 	/**
-	 * Create a new environnement of a given size.
-	 * 
-	 * @param width  The width of the environnement.
-	 * @param height  The height of the environnement.
-	 * @param entities  The existing entities.
-	 */
-	public Environnement(int width, int height, List<FixedObject> entities)
-	{
-		size = new Dimension(width, height);
-		grid = new QuadTree<FixedObject>(new Rectangle(0,0,width,height), gridMaxDepth);
-		grid.addAll(entities);
-		this.entities.addAll(entities);		
-	}
-	
-	/**
 	 * Add an object ressource/wall in the environnement.
 	 * 
 	 * @param obj  The object.
 	 */
 	synchronized public void add(FixedObject obj)
 	{
+		if (obj.harvestable())
+			ressourceQuantity++;
+			
 		grid.add(obj);
 		entities.add(obj);
 	}
@@ -107,17 +100,6 @@ public class Environnement
 	synchronized public void add(AgentEntity agent)
 	{
 		agents.add(agent);
-	}
-	
-	/**
-	 * Add multiple objects ressource/wall in the environnement.
-	 * 
-	 * @param objs  A list of objects.
-	 */
-	synchronized public void addAll(List<FixedObject> objs)
-	{
-		grid.addAll(objs);
-		entities.addAll(objs);
 	}
 	
 	/**
@@ -174,6 +156,16 @@ public class Environnement
 	}
 	
 	/**
+	 * Get the duration in millis of the execution.
+	 * 
+	 * @return The duration in (ms) of the execution.
+	 */
+	public long duration()
+	{
+		return duration;
+	}
+	
+	/**
 	 * Get the number of agent created in the environnement
 	 * and increase the counter.
 	 * 
@@ -185,6 +177,16 @@ public class Environnement
 	}
 	
 	/**
+	 * Get the number of harvested ressources.
+	 * 
+	 * @return The number of harvested ressources.
+	 */
+	public int getHarvestedQuantity()
+	{
+		return harvestedQuantity;
+	}
+	
+	/**
 	 * Remove an object from the environnement.
 	 * 
 	 * @param obj  The object.
@@ -193,6 +195,8 @@ public class Environnement
 	 */
 	synchronized public boolean remove(FixedObject obj)
 	{
+		if (obj.harvestable())
+			harvestedQuantity++;
 		return entities.remove(obj) && grid.remove(obj);
 	}
 	
@@ -205,6 +209,9 @@ public class Environnement
 	 */
 	synchronized public boolean remove(AgentEntity agent)
 	{
-		return agents.remove(agent);
+		boolean res = agents.remove(agent);
+		if (agents.isEmpty())
+			duration = System.currentTimeMillis() - timeStamp;
+		return res;
 	}
 }

@@ -30,18 +30,8 @@ public class DummyBrain extends Brain
 	{
 		super.update();
 		
-		handleMessage();/*
-		if (hitbox().x == 10){
-			//~ if (!hadChild){
-				//~ sendMessage(createCopulationMessage(),getVisibleAgents().get(0));hadChild=true;}
-			if (hunger() > 0.5)
-				eat(10);
-			if (getQuantity("Food") < 10)
-			{
-				broadcast(createFoodRequestMessage());
-			}
-			return;}
-		*/
+		handleMessage();
+		
 		FixedObject nearest = getNearestRessource();
 		if (nearest == null || !moved)
 		{		
